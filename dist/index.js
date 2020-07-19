@@ -1,4 +1,3 @@
-import 'core-js/modules/es.object.assign';
 import 'core-js/modules/es.regexp.to-string';
 import 'core-js/modules/web.dom-collections.iterator';
 
@@ -87,10 +86,18 @@ class MObserver {
 
     _classPrivateFieldSet(this, _cache, new Map());
   }
+  /**
+   * 获取当前绑定 element 元素的 dataset 属性前缀
+   */
+
 
   get prefix() {
     return _classPrivateFieldGet(this, _prefix);
   }
+  /**
+   * 当前绑定 element 元素的 dataset 属性前缀
+   */
+
 
   set prefix(value) {
     _classPrivateFieldSet(this, _prefix, typeof value === 'string' && value.length ? value : 'zc');
@@ -104,18 +111,20 @@ class MObserver {
 
   /**
    * 生成唯一字符串
+   * 
+   * @return {String} 32 位长度字符串
    */
   get uuid() {
     return [Math.random().toString(16).slice(2), new Date().getTime().toString(16), Math.random().toString(16).slice(2)].join('').slice(2, 34);
   }
 
   /**
-   * 获取 target / 判断 target 的有效性
+   * Element 元素选择器
    * 
    * @param {Element|String} target 
    * @return {Elment}
    */
-  getTarget(target) {
+  selector(target) {
     if (typeof target === 'string') {
       target = document.querySelector(target);
     }
@@ -133,7 +142,7 @@ class MObserver {
 
 
   getCacheKey(target) {
-    target = this.getTarget(target);
+    target = this.selector(target);
 
     let cacheKey = target.dataset[_classPrivateFieldGet(this, _dataset)];
 
@@ -150,17 +159,185 @@ class MObserver {
    * @param {Element|String} target 需要监听的 Element 元素
    * @param {Function} callback
    * @param {String} name  当前绑定的 MutationObserver 实例名
-   * @return {Object} 返回包含有 MutationObserver实例名 和 MutationObserver实例 的对象
+   * @return {Object} 返回包含有 MutationObserver实例名 和 MutationObserver实例对象
    */
 
 
   /**
+   * childList，attributes 或者 characterData 三个属性之中，至少有一个必须为 true，否则会抛出 TypeError 异常
+   * 
+   * @param {String|Element} target 被监听的节点  
+   * @param {Function} callback 当观察到变动时执行的回调函数
+   * @param {Object} config MutationObserverInit字典配置项
+   * @param {String} name MutationObserver 实例的变量名
+   * @return {Object} 返回包含有 MutationObserver实例名 和 MutationObserver实例对象
+   */
+  observe(target, callback) {
+    let config = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+    let name = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : '';
+    config = config || {};
+    return _classPrivateMethodGet(this, _observe, _observe2).call(this, target, callback, config, name);
+  }
+  /**
+   * 监听所有的 MutationObserverInit 字典属性
+   * 
+   * @param {String|Element} target 被监听的节点  
+   * @param {Function} callback 当观察到变动时执行的回调函数
+   * @param {Array} filter 要监视的特定属性名称的数组。如果未包含此属性，则对所有属性的更改都会触发变动通知  
+   * @param {String} name MutationObserver 实例的变量名
+   * @return {Object} 返回包含有 MutationObserver实例名 和 MutationObserver实例对象
+   */
+
+
+  observeAll(target, callback) {
+    let filter = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
+    let name = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : '';
+
+    let config = _classPrivateFieldGet(this, _config);
+
+    if (Array.isArray(filter) && filter.length) {
+      config.attributeFilter = filter;
+    }
+
+    return _classPrivateMethodGet(this, _observe, _observe2).call(this, target, callback, config, name);
+  }
+  /**
+   * 监听元素的属性值变更
+   * 
+   * @param {String|Element} target 被监听的节点  
+   * @param {Function} callback 当观察到变动时执行的回调函数 
+   * @param {String} name MutationObserver 实例的变量名
+   * @return {Object} 返回包含有 MutationObserver实例名 和 MutationObserver实例对象
+   */
+
+
+  attribute(target, callback) {
+    let name = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '';
+    let config = {
+      attributes: true,
+      attributeOldValue: true
+    };
+    return _classPrivateMethodGet(this, _observe, _observe2).call(this, target, callback, config, name);
+  }
+  /**
+   * 监听元素及其后代元素的属性值变更
+   * 
+   * @param {String|Element} target 被监听的节点  
+   * @param {Function} callback 当观察到变动时执行的回调函数 
+   * @param {String} name MutationObserver 实例的变量名
+   * @return {Object} 返回包含有 MutationObserver实例名 和 MutationObserver实例对象
+   */
+
+
+  attributeChild(target, callback) {
+    let name = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '';
+    let config = {
+      subtree: true,
+      attributes: true,
+      attributeOldValue: true
+    };
+    return _classPrivateMethodGet(this, _observe, _observe2).call(this, target, callback, config, name);
+  }
+  /**
+   * 监听元素的特定属性名称
+   * 
+   * @param {String|Element} target 被监听的节点  
+   * @param {Function} callback 当观察到变动时执行的回调函数 
+   * @param {Array} filter 
+   * @param {String} name MutationObserver 实例的变量名
+   * @return {Object} 返回包含有 MutationObserver实例名 和 MutationObserver实例对象
+   */
+
+
+  attributeFilter(target, callback, filter, name) {
+    let config = {
+      attributes: true,
+      attributeFilter: filter,
+      attributeOldValue: true
+    };
+    return _classPrivateMethodGet(this, _observe, _observe2).call(this, target, callback, config, name);
+  }
+  /**
+   * 监听元素及其后代元素的特定属性名称
+   * 
+   * @param {String|Element} target 被监听的节点  
+   * @param {Function} callback 当观察到变动时执行的回调函数 
+   * @param {String} name MutationObserver 实例的变量名
+   * @return {Object} 返回包含有 MutationObserver实例名 和 MutationObserver实例对象
+   */
+
+
+  attributeFilterChild(target, callback, filter, name) {
+    let config = {
+      subtree: true,
+      attributes: true,
+      attributeFilter: filter,
+      attributeOldValue: true
+    };
+    return _classPrivateMethodGet(this, _observe, _observe2).call(this, target, callback, config, name);
+  }
+  /**
+   * 监视目标节点的子节点的添加或删除
+   * 
+   * @param {String|Element} target 被监听的节点  
+   * @param {Function} callback 当观察到变动时执行的回调函数 
+   * @param {String} name MutationObserver 实例的变量名
+   * @return {Object} 返回包含有 MutationObserver实例名 和 MutationObserver实例对象
+   */
+
+
+  node(target, callback) {
+    let name = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '';
+    return _classPrivateMethodGet(this, _observe, _observe2).call(this, target, callback, {
+      childList: true
+    }, name);
+  }
+  /**
+   * 监视目标节点的后代节点的添加或删除
+   * 
+   * @param {String|Element} target 被监听的节点  
+   * @param {Function} callback 当观察到变动时执行的回调函数 
+   * @param {String} name MutationObserver 实例的变量名
+   * @return {Object} 返回包含有 MutationObserver实例名 和 MutationObserver实例对象
+   */
+
+
+  nodeChild(target, callback) {
+    let name = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '';
+    let config = {
+      subtree: true,
+      childList: true
+    };
+    return _classPrivateMethodGet(this, _observe, _observe2).call(this, target, callback, config, name);
+  }
+  /**
+   * 监视指定目标节点或子节点树中节点所包含的字符数据的变化
+   * 
+   * @param {String|Element} target 被监听的节点  
+   * @param {Function} callback 当观察到变动时执行的回调函数 
+   * @param {String} name MutationObserver 实例的变量名
+   * @return {Object} 返回包含有 MutationObserver实例名 和 MutationObserver实例对象
+   */
+
+
+  character(target, callback) {
+    let name = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '';
+    let config = {
+      subtree: true,
+      characterData: true,
+      characterDataOldValue: true
+    };
+    return _classPrivateMethodGet(this, _observe, _observe2).call(this, target, callback, config, name);
+  }
+  /**
    * 告诉观察者停止观察变动
    * 
-   * @param {Element|String} target  
+   * @param {Element|String} target 被监听的节点 
    * @param {String|null} name MutationObserver 实例名。如果 name 为 null，则停止观察绑定的全部 MutationObserver 实例 
    * @return {Boolean}
    */
+
+
   disconnect(target) {
     let name = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
     let cacheKey = this.getCacheKey(target);
@@ -215,53 +392,6 @@ class MObserver {
     return temp;
   }
 
-  /**
-   * 对 MutationObserver.prototype.observe 的封装
-   */
-  observe(target, callback) {
-    let config = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-    let name = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : '';
-    config = Object.assign(_classPrivateFieldGet(this, _config), config || {});
-    return _classPrivateMethodGet(this, _observe, _observe2).call(this, target, callback, config, name);
-  }
-
-  attributes(target, callback) {
-    let config = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-    let name = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : '';
-    config = Object.assign(config || {}, {
-      attributes: true
-    });
-    return _classPrivateMethodGet(this, _observe, _observe2).call(this, target, callback, config, name);
-  }
-
-  childList(target, callback) {
-    let config = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-    let name = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : '';
-    config = Object.assign(config || {}, {
-      childList: true
-    });
-    return _classPrivateMethodGet(this, _observe, _observe2).call(this, target, callback, config, name);
-  }
-
-  subtree(target, callback) {
-    let config = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-    let name = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : '';
-    config = Object.assign(config || {}, {
-      subtree: true
-    });
-    return _classPrivateMethodGet(this, _observe, _observe2).call(this, target, callback, config, name);
-  }
-
-  character(target, callback) {
-    let config = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-    let name = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : '';
-    config = Object.assign(config || {}, {
-      characterData: true,
-      characterDataOldValue: true
-    });
-    return _classPrivateMethodGet(this, _observe, _observe2).call(this, target, callback, config, name);
-  }
-
 }
 
 var _get_config = function _get_config() {
@@ -293,7 +423,7 @@ var _observer2 = function _observer2(target, callback, name) {
     console.log(list);
   });
   let mos = _classPrivateFieldGet(this, _cache).get(cacheKey) || {};
-  name = name || cacheKey;
+  name = name || this.uuid;
   mos[name] = observer;
 
   _classPrivateFieldGet(this, _cache).set(cacheKey, mos);
@@ -305,7 +435,7 @@ var _observer2 = function _observer2(target, callback, name) {
 };
 
 var _observe2 = function _observe2(target, callback, config, name) {
-  target = this.getTarget(target);
+  target = this.selector(target);
 
   let ob = _classPrivateMethodGet(this, _observer, _observer2).call(this, target, callback, name);
 

@@ -16,7 +16,7 @@ module.exports = {
       exclude: 'node_modules/**'
     }),
     commonjs(),
-    resolve(),
+    // resolve(),
     terser()
   ]
 }
