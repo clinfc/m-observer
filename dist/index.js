@@ -114,7 +114,7 @@ class MObserver {
    * 
    * @return {String} 32 位长度字符串
    */
-  get uuid() {
+  uuid() {
     return [Math.random().toString(16).slice(2), new Date().getTime().toString(16), Math.random().toString(16).slice(2)].join('').slice(2, 34);
   }
 
@@ -147,7 +147,7 @@ class MObserver {
     let cacheKey = target.dataset[_classPrivateFieldGet(this, _dataset)];
 
     if (!cacheKey) {
-      cacheKey = this.uuid;
+      cacheKey = this.uuid();
       target.dataset[_classPrivateFieldGet(this, _dataset)] = cacheKey;
     }
 
@@ -423,7 +423,7 @@ var _observer2 = function _observer2(target, callback, name) {
     console.log(list);
   });
   let mos = _classPrivateFieldGet(this, _cache).get(cacheKey) || {};
-  name = name || this.uuid;
+  name = name || this.uuid();
   mos[name] = observer;
 
   _classPrivateFieldGet(this, _cache).set(cacheKey, mos);

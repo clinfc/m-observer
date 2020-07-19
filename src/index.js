@@ -54,7 +54,7 @@ class MObserver {
    * 
    * @return {String} 32 位长度字符串
    */
-  get uuid() {
+  uuid() {
     return [
       Math.random().toString(16).slice(2),
       new Date().getTime().toString(16),
@@ -90,7 +90,7 @@ class MObserver {
     target = this.selector(target)
     let cacheKey = target.dataset[this.#dataset]
     if (!cacheKey) {
-      cacheKey = this.uuid
+      cacheKey = this.uuid()
       target.dataset[this.#dataset] = cacheKey
     }
     return cacheKey
@@ -110,7 +110,7 @@ class MObserver {
       console.log(list)
     })
     let mos = this.#cache.get(cacheKey) || {}
-    name = name || this.uuid
+    name = name || this.uuid()
     mos[name] = observer
     this.#cache.set(cacheKey, mos)
     return { name, observer }
