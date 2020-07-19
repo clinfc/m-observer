@@ -16,7 +16,16 @@ module.exports = {
       exclude: 'node_modules/**'
     }),
     commonjs(),
-    // resolve(),
+    resolve({
+      // 将自定义选项传递给解析插件
+      customResolveOptions: {
+        moduleDirectory: 'node_modules'
+      }
+    }),
     terser()
+  ],
+  external: [
+    'core-js/modules/es.regexp.to-string',
+    'core-js/modules/web.dom-collections.iterator'
   ]
 }

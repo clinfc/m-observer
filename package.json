@@ -2,7 +2,7 @@
   "name": "m-observer",
   "version": "0.0.1",
   "description": "",
-  "main": "dis/index.min.js",
+  "main": "dist/index.min.js",
   "files": [
     "src",
     "dist"
