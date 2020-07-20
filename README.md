@@ -66,8 +66,8 @@ API|说明|用法|返回值
 `node`|监听指定节点的 子节点 的添加或删除|`MObserver.node(target, callback, name)`|`{ name, observer }`
 `nodeChild`|监听指定节点的 子节点和后代节点 的添加或删除|`MObserver.nodeChild(target, callback, name)`|`{ name, observer }`
 `character`|监视指定节点或子节点树中节点所包含的字符数据的变化|`MObserver.character(target, callback, name)`|`{ name, observer }`
-`takeRecords`|返回已检测到但尚未由观察者的回调函数处理的所有匹配DOM更改的列表，使变更队列保持为空|`MObserver.takeRecords(target, name)`|`true`/`false`
-`disconnect`|停止对节点的监听|`MObserver.disconnect(target, name)`|`MutationRecord Array`
+`takeRecords`|返回已检测到但尚未由观察者的回调函数处理的所有匹配DOM更改的列表，使变更队列保持为空|`MObserver.takeRecords(target, name)`|`{ name: MutationRecordArray }`
+`disconnect`|停止对节点的监听|`MObserver.disconnect(target, name)`|`true`/`false`
 
 
 ### 参数说明
@@ -89,7 +89,7 @@ API|说明|用法|返回值
 :-|:-
 `name`|与参数的 name 同意
 `observer`|本次绑定的 MutationObserver 实例
-`MutationRecord Array`|参考 [MutationRecord](https://developer.mozilla.org/zh-CN/docs/Web/API/MutationRecord)
+`MutationRecordArray`|参考 [MutationRecord](https://developer.mozilla.org/zh-CN/docs/Web/API/MutationRecord)
 
 
 ### 示例
