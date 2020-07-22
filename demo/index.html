@@ -13,14 +13,24 @@
         margin-bottom: 20px;
         box-shadow: 0 0 5px 0 #999;
       }
-      .title {
+      .header {
         width: 100%;
-        height: 32px;
+        height: 52px;
         padding: 10px 15px;
         font-size: 18px;
         color: #666666;
         line-height: 32px;
         border-bottom: 1px solid #DADADA;
+        display: flex;
+        box-sizing: border-box;
+      }
+      .header>.title {
+        flex-grow: 1;
+        flex-shrink: 0;
+      }
+      .header>button {
+        flex-shrink: 0;
+        margin-left: 10px;
       }
       .content {
         display: flex;
@@ -69,7 +79,12 @@
 	<body>
     <div class="container">
       <div class="demo-item">
-        <div class="title">MObserver.prototype.character</div>
+        <div class="header">
+          <div class="title">MObserver.prototype.character</div>
+          <button type="button" title="停止观察" onclick="disconnect('#demo-01', 'demo-01')">disconnect</button>
+          <button type="button" title="重新开始观察" onclick="reconnect('#demo-01', 'demo-01')">reconnect</button>
+          <button type="button" title="移除观察" onclick="remove('#demo-01', 'demo-01')">remove</button>
+        </div>
         <div class="content">
           <div class="left">
             <div id="demo-01" class="editor" contenteditable="true"></div>
@@ -80,7 +95,12 @@
         </div>
       </div>
       <div class="demo-item">
-        <div class="title">MObserver.prototype.attribute</div>
+        <div class="header">
+          <div class="title">MObserver.prototype.attribute</div>
+          <button type="button" title="停止观察" onclick="disconnect('#demo-02', 'demo-02')">disconnect</button>
+          <button type="button" title="重新开始观察" onclick="reconnect('#demo-02', 'demo-02')">reconnect</button>
+          <button type="button" title="移除观察" onclick="remove('#demo-02', 'demo-02')">remove</button>
+        </div>
         <div class="content">
           <div class="left">
             <div id="demo-02">
@@ -95,7 +115,12 @@
         </div>
       </div>
       <div class="demo-item">
-        <div class="title">MObserver.prototype.attributeFilter</div>
+        <div class="header">
+          <div class="title">MObserver.prototype.attributeFilter</div>
+          <button type="button" title="停止观察" onclick="disconnect('#demo-03', 'demo-03')">disconnect</button>
+          <button type="button" title="重新开始观察" onclick="reconnect('#demo-03', 'demo-03')">reconnect</button>
+          <button type="button" title="移除观察" onclick="remove('#demo-03', 'demo-03')">remove</button>
+        </div>
         <div class="content">
           <div class="left">
             <div id="demo-03">
@@ -109,7 +134,12 @@
         </div>
       </div>
       <div class="demo-item">
-        <div class="title">MObserver.prototype.node</div>
+        <div class="header">
+          <div class="title">MObserver.prototype.node</div>
+          <button type="button" title="停止观察" onclick="disconnect('#demo-04', 'demo-04')">disconnect</button>
+          <button type="button" title="重新开始观察" onclick="reconnect('#demo-04', 'demo-04')">reconnect</button>
+          <button type="button" title="移除观察" onclick="remove('#demo-04', 'demo-04')">remove</button>
+        </div>
         <div class="content">
           <div class="left">
             <div id="demo-04"></div>
@@ -123,6 +153,7 @@
     </div>
     <script type="text/javascript">
       
+      // 将 mutationList 显示到页面
       function showMutationList(target, data = {}) {
         let el = document.querySelector(target)
         data = data.map(row => {
@@ -148,6 +179,21 @@
           return temp
         })
         el.innerText = JSON.stringify(data, undefined, 2)
+      }
+      
+      // 停止观察
+      function disconnect(target, name) {
+        observer.disconnect(target, name)
+      }
+      
+      // 重新开始观察
+      function reconnect(target, name) {
+        observer.reconnect(target, name)
+      }
+      
+      // 移除观察
+      function remove(target, name) {
+        observer.remove(target, name)
       }
       
       function listen(target, event, callback) {
