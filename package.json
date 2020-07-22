@@ -13,7 +13,7 @@
     "MutationObserver"
   ],
   "scripts": {
-    "dev": "rollup -c rollup.config.dev.js",
+    "dev": "rollup -wc rollup.config.build.js",
     "build": "rollup -c rollup.config.build.js",
     "lint": "eslint ./src"
   },
