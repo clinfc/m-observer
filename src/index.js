@@ -10,14 +10,12 @@ export default class MObserver {
       }
     }
   */
-  #moCache
-  
-  #configCache
+  #cache
   
   #prefix = 'zc'
   
   constructor(prefix) {
-    this.#moCache = new Map()
+    this.#cache = new Map()
     this.prefix = prefix
   }
   
@@ -72,10 +70,6 @@ export default class MObserver {
     ].join('').slice(2, 34)
   }
   
-  get #dataset() {
-    return `${this.prefix}Mobserver`
-  }
-  
   /**
    * Element 元素选择器
    * 
@@ -98,10 +92,11 @@ export default class MObserver {
    */
   getCacheKey(target) {
     target = this.selector(target)
-    let cacheKey = target.dataset[this.#dataset]
+    let dataset = `${this.prefix}Mobserver`
+    let cacheKey = target.dataset[dataset]
     if (!cacheKey) {
       cacheKey = this.uuid()
-      target.dataset[this.#dataset] = cacheKey
+      target.dataset[dataset] = cacheKey
     }
     return cacheKey
   }
@@ -111,28 +106,33 @@ export default class MObserver {
    * 
    * @param {Element|String} target 需要监听的 Element 元素
    * @param {Function} callback
+   * @param {Object} config MutationObserverInit字典配置项
    * @param {String} name  当前绑定的 MutationObserver 实例名
    * @return {Object} 返回包含有 MutationObserver实例名 和 MutationObserver实例对象
    */
-  #observer(target, callback, name) {
-    let cacheKey = this.getCacheKey(target)
-    let observer = new MutationObserver(callback || function(list) {
-      console.log(list)
-    })
-    let mos = this.#moCache.get(cacheKey) || {}
-    name = name || this.uuid()
-    mos[name] = observer
-    this.#moCache.set(cacheKey, mos)
-    return { name, observer }
-  }
-  
   #observe(target, callback, config, name) {
     target = this.selector(target)
+    callback = callback || function(list) { console.log(list) }
+    name = name || this.uuid()
     
-    let ob = this.#observer(target, callback, name)
-    ob.observer.observe(target, config)
+    // 绑定 MutationObserver
+    let observer = new MutationObserver(callback)
+    observer.observe(target, config)
     
-    return ob
+    // 缓存 MutationObserver实例 和 config配置项
+    let cacheKey = this.getCacheKey(target)
+    let mos = this.#cache.get(cacheKey) || {}
+    if (mos[name]) {
+      mos[name].observer.disconnect()
+      mos[name].observer = null
+    }
+    mos[name] = { 
+      config, 
+      observer 
+    }
+    this.#cache.set(cacheKey, mos)
+    
+    return { name, observer }
   }
   
   /**
@@ -287,18 +287,44 @@ export default class MObserver {
    * @param {String|null} name MutationObserver 实例名。如果 name 为 null，则停止观察绑定的全部 MutationObserver 实例 
    * @return {Boolean}
    */
-  disconnect(target, name = '') {
+  disconnect(target, name = null) {
     let cacheKey = this.getCacheKey(target)
-    let mos = this.#moCache.get(cacheKey)
+    let mos = this.#cache.get(cacheKey)
     if (mos) {
       if (name === null) {
         Object.values(mos).forEach(mo => {
-          mo.disconnect()
+          mo.observer.disconnect()
         })
         return true
       }
       if (name && mos[name]) {
-        mos[name].disconnect()
+        mos[name].observer.disconnect()
+        return true
+      }
+    }
+    return false
+  }
+  
+  /**
+   * 告诉观察者重新开始观察行为
+   * 
+   * @param {Element|String} target 被监听的节点 
+   * @param {String|null} name MutationObserver 实例名。如果 name 为 null，则开始观察绑定的全部 MutationObserver 实例 
+   * @return {Boolean}
+   */
+  reconnect(target, name = null) {
+    let cacheKey = this.getCacheKey(target)
+    let mos = this.#cache.get(cacheKey)
+    if (mos) {
+      target = this.selector(target)
+      if (name === null) {
+        Object.values(mos).forEach(mo => {
+          mo.observer.observe(target, mo.config)
+        })
+        return true
+      }
+      if (name && mos[name]) {
+        mos[name].observer.observe(target, mos[name].config)
         return true
       }
     }
@@ -314,16 +340,16 @@ export default class MObserver {
    */
   takeRecords(target, name = '') {
     let cacheKey = this.getCacheKey(target)
-    let mos = this.#moCache.get(cacheKey)
+    let mos = this.#cache.get(cacheKey)
     let temp = {}
     if (mos) {
       if (name === null) {
         for(let mo in mos) {
-          temp[mo] = mos[mo].takeRecords()
+          temp[mo] = mos[mo].observer.takeRecords()
         }
       }
       if (name && mos[name]) {
-        temp[name] = mos[name].takeRecords()
+        temp[name] = mos[name].observer.takeRecords()
       }
     }
     return temp
@@ -337,21 +363,21 @@ export default class MObserver {
    */
   remove(target, name = '') {
     let cacheKey = this.getCacheKey(target)
-    let mos = this.#moCache.get(cacheKey)
+    let mos = this.#cache.get(cacheKey)
     if (mos) {
       if (name === null) {
         for(let mo in mos) {
-          mos[mo].disconnect()
-          mos[mo] = null
+          mos[mo].observer.disconnect()
+          mos[mo].observer = null
         }
-        this.#moCache.delete(cacheKey)
+        this.#cache.delete(cacheKey)
         return true
       }
       if (mos[name]) {
-        mos[name].disconnect()
-        mos[name] = null
+        mos[name].observer.disconnect()
+        mos[name].observer = null
         delete mos[name]
-        this.#moCache.set(cacheKey, mos)
+        this.#cache.set(cacheKey, mos)
         return true
       }
     }
@@ -361,13 +387,13 @@ export default class MObserver {
    * 取消所有的监听并回收内存
    */
   clear() {
-    this.#moCache.forEach(function(mos) {
-      for(let mo in mos) {
-        mos[mo].disconnect()
-        mos[mo] = null
+    this.#cache.forEach(function(mos) {
+      for(let name in mos) {
+        mos[name].observer.disconnect()
+        mos[name].observer = null
       }
     })
-    this.#moCache.clear()
+    this.#cache.clear()
     return true
   }
 }
