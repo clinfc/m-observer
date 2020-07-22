@@ -1,14 +1,24 @@
 /**
  * 对 MutationObserver 的封装，简化其使用方式
  */
-class MObserver {
+export default class MObserver {
   
-  #cache
+  /*
+    {
+      target_dataset_mobserver_id: {
+        name: new_MutationObserver
+      }
+    }
+  */
+  #moCache
+  
+  #configCache
   
   #prefix = 'zc'
   
-  constructor() {
-    this.#cache = new Map()
+  constructor(prefix) {
+    this.#moCache = new Map()
+    this.prefix = prefix
   }
   
   /**
@@ -109,10 +119,10 @@ class MObserver {
     let observer = new MutationObserver(callback || function(list) {
       console.log(list)
     })
-    let mos = this.#cache.get(cacheKey) || {}
+    let mos = this.#moCache.get(cacheKey) || {}
     name = name || this.uuid()
     mos[name] = observer
-    this.#cache.set(cacheKey, mos)
+    this.#moCache.set(cacheKey, mos)
     return { name, observer }
   }
   
@@ -279,7 +289,7 @@ class MObserver {
    */
   disconnect(target, name = '') {
     let cacheKey = this.getCacheKey(target)
-    let mos = this.#cache.get(cacheKey)
+    let mos = this.#moCache.get(cacheKey)
     if (mos) {
       if (name === null) {
         Object.values(mos).forEach(mo => {
@@ -304,7 +314,7 @@ class MObserver {
    */
   takeRecords(target, name = '') {
     let cacheKey = this.getCacheKey(target)
-    let mos = this.#cache.get(cacheKey)
+    let mos = this.#moCache.get(cacheKey)
     let temp = {}
     if (mos) {
       if (name === null) {
@@ -318,6 +328,46 @@ class MObserver {
     }
     return temp
   }
+  
+  /**
+   * 取消监听并回收内存
+   * 
+   * @param {Element|String} target  
+   * @param {String|null} name MutationObserver 实例名。如果 name 为 null，则停止观察绑定的全部 MutationObserver 实例 
+   */
+  remove(target, name = '') {
+    let cacheKey = this.getCacheKey(target)
+    let mos = this.#moCache.get(cacheKey)
+    if (mos) {
+      if (name === null) {
+        for(let mo in mos) {
+          mos[mo].disconnect()
+          mos[mo] = null
+        }
+        this.#moCache.delete(cacheKey)
+        return true
+      }
+      if (mos[name]) {
+        mos[name].disconnect()
+        mos[name] = null
+        delete mos[name]
+        this.#moCache.set(cacheKey, mos)
+        return true
+      }
+    }
+  }
+  
+  /**
+   * 取消所有的监听并回收内存
+   */
+  clear() {
+    this.#moCache.forEach(function(mos) {
+      for(let mo in mos) {
+        mos[mo].disconnect()
+        mos[mo] = null
+      }
+    })
+    this.#moCache.clear()
+    return true
+  }
 }
-
-export default new MObserver()
