@@ -38,9 +38,9 @@ observer.attribute('#editor', function(mutationList, observer) {
   
   let observer = new MObserver()
   // 观察 #test 节点的 title 属性
-  observer.attribute(test, function(mutationList, observer) {
+  observer.attributeFilter(test, function(mutationList, observer) {
     console.log(mutationList);
-  }, 'test-title')
+  }, ['title'], 'test-title')
   
   // 监视指定目标（#editor）节点或子节点树中节点所包含的字符数据的变化
   observer.character('#editor', function(mutationList, observer) {
