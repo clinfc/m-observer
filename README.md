@@ -37,15 +37,11 @@ observer.attribute('#editor', function(mutationList, observer) {
   let test = document.querySelector('#test')
   
   let observer = new MObserver()
+  
   // 观察 #test 节点的 title 属性
   observer.attributeFilter(test, function(mutationList, observer) {
     console.log(mutationList);
   }, ['title'], 'test-title')
-  
-  // 监视指定目标（#editor）节点或子节点树中节点所包含的字符数据的变化
-  observer.character('#editor', function(mutationList, observer) {
-    console.log(mutationList)
-  }, 'editor-charcater')
 </script>
 ```
 
