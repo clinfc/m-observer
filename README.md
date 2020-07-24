@@ -107,6 +107,8 @@ API|说明|用法|返回值
 * JavaScript
 
 ```js
+let observer = new MObserver('mo')
+
 let test = document.querySelector('#test')
 
 observer.attributeFilter(test, function(mutationList, observer) {
