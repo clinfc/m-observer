@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+    <script src="../dist/index.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="./common.js" type="text/javascript" charset="utf-8"></script>
+    <link rel="stylesheet" type="text/css" href="./common.css"/>
+	</head>
+	<body>
+    <div class="container">
+      <div class="demo-item">
+        <div class="header">
+          <div class="title">observe</div>
+          <button type="button" title="停止观察" onclick="disconnect('#demo-01', 'observe')">disconnect</button>
+          <button type="button" title="重新开始观察" onclick="reconnect('#demo-01', 'observe')">reconnect</button>
+          <button type="button" title="移除观察" onclick="remove('#demo-01', 'observe')">remove</button>
+        </div>
+        <div class="content">
+          <div class="left">
+            <div id="demo-01" class="editor" contenteditable="true"></div>
+          </div>
+          <div class="right">
+            <pre id="demo-01-mobserver"></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script type="text/javascript">
+      MObserver.observe('#demo-01', 'observe', function(list) {
+        showMutationList('#demo-01-mobserver', list)
+      }, { 
+        attributes: true,
+        attributeOldValue: true, 
+        childList: true, 
+        subtree: true, 
+        characterData: true, 
+        characterDataOldValue: true ,
+      })
+    </script>
+	</body>
+</html>

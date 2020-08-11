@@ -1,0 +1,57 @@
+.container {
+  width: 900px;
+  margin: auto;
+}
+
+.demo-item {
+  margin-bottom: 20px;
+  box-shadow: 0 0 5px 0 #999;
+}
+
+.header {
+  width: 100%;
+  height: 52px;
+  padding: 10px 15px;
+  font-size: 18px;
+  color: #666666;
+  line-height: 32px;
+  border-bottom: 1px solid #DADADA;
+  display: flex;
+  box-sizing: border-box;
+}
+
+.header>.title {
+  flex-grow: 1;
+  flex-shrink: 0;
+}
+
+.header>button {
+  flex-shrink: 0;
+  margin-left: 10px;
+}
+
+.content {
+  display: flex;
+  min-height: 150px;
+}
+
+.content>div {
+  flex-shrink: 0;
+  width: 50%;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+.left {
+  border-right: 1px solid #dadada;
+}
+
+.right {}
+
+.editor {
+  box-shadow: 0 0 2px 0 #008000;
+  width: 100%;
+  height: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+}

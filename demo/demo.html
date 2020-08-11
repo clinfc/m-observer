@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+    <script src="../dist/index.min.js" type="text/javascript" charset="utf-8"></script>
+    <style type="text/css">
+      .container {
+        width: 980px;
+        margin: auto;
+      }
+      .demo-item {
+        margin-bottom: 20px;
+        box-shadow: 0 0 5px 0 #999;
+      }
+      .header {
+        width: 100%;
+        height: 52px;
+        padding: 10px 15px;
+        font-size: 18px;
+        color: #666666;
+        line-height: 32px;
+        border-bottom: 1px solid #DADADA;
+        display: flex;
+        box-sizing: border-box;
+      }
+      .header>.title {
+        flex-grow: 1;
+        flex-shrink: 0;
+      }
+      .header>button {
+        flex-shrink: 0;
+        margin-left: 10px;
+      }
+      .content {
+        display: flex;
+        min-height: 150px;
+      }
+      .content>div {
+        flex-shrink: 0;
+        width: 50%;
+        padding: 10px;
+        box-sizing: border-box;
+      }
+      .left {
+        border-right: 1px solid #dadada;
+      }
+      .right {}
+      .editor {
+        box-shadow: 0 0 2px 0 #008000;
+        width: 100%;
+        height: 100%;
+        padding: 10px;
+        box-sizing: border-box;
+      }
+      #demo-02 {
+        display: flex;
+        flex-wrap: wrap;
+        align-content: flex-start;
+        height: 100%;
+      }
+      #demo-02>div {
+        flex-shrink: 0;
+        flex-grow: 1;
+        width: 100%;
+      }
+      #demo-04 {
+        display: flex;
+        flex-wrap: wrap;
+      }
+      #demo-04 span {
+        padding: 5px 7px;
+        box-shadow: 0 0 3px 0 #008000;
+        margin: 0 10px 10px 0;
+        cursor: pointer;
+      }
+    </style>
+	</head>
+	<body>
+    <div class="container">
+      <div class="demo-item">
+        <div class="header">
+          <div class="title">MObserver.prototype.character</div>
+          <button type="button" title="停止观察" onclick="disconnect('#demo-01', 'demo-01')">disconnect</button>
+          <button type="button" title="重新开始观察" onclick="reconnect('#demo-01', 'demo-01')">reconnect</button>
+          <button type="button" title="移除观察" onclick="remove('#demo-01', 'demo-01')">remove</button>
+        </div>
+        <div class="content">
+          <div class="left">
+            <div id="demo-01" class="editor" contenteditable="true"></div>
+          </div>
+          <div class="right">
+            <pre id="demo-01-mobserver"></pre>
+          </div>
+        </div>
+      </div>
+      <div class="demo-item">
+        <div class="header">
+          <div class="title">MObserver.prototype.attribute</div>
+          <button type="button" title="停止观察" onclick="disconnect('#demo-02', 'demo-02')">disconnect</button>
+          <button type="button" title="重新开始观察" onclick="reconnect('#demo-02', 'demo-02')">reconnect</button>
+          <button type="button" title="移除观察" onclick="remove('#demo-02', 'demo-02')">remove</button>
+        </div>
+        <div class="content">
+          <div class="left">
+            <div id="demo-02">
+              <div><label>demo-02-title <input type="text" id="title-01"></label></div>
+              <div><label>demo-02-color <input type="color" id="color-01"></label></div>
+              <div><label>demo-02-bgColor <input type="color" id="bgColor-01" value="#ffffff"></label></div>
+            </div>
+          </div>
+          <div class="right">
+            <pre id="demo-02-mobserver"></pre>
+          </div>
+        </div>
+      </div>
+      <div class="demo-item">
+        <div class="header">
+          <div class="title">MObserver.prototype.attributeFilter</div>
+          <button type="button" title="停止观察" onclick="disconnect('#demo-03', 'demo-03')">disconnect</button>
+          <button type="button" title="重新开始观察" onclick="reconnect('#demo-03', 'demo-03')">reconnect</button>
+          <button type="button" title="移除观察" onclick="remove('#demo-03', 'demo-03')">remove</button>
+        </div>
+        <div class="content">
+          <div class="left">
+            <div id="demo-03">
+              <div><label>demo-03-title <input type="text" id="title-02"></label></div>
+              <div><label>demo-03-color <input type="color" id="color-02"></label></div>
+            </div>
+          </div>
+          <div class="right">
+            <pre id="demo-03-mobserver"></pre>
+          </div>
+        </div>
+      </div>
+      <div class="demo-item">
+        <div class="header">
+          <div class="title">MObserver.prototype.node</div>
+          <button type="button" title="停止观察" onclick="disconnect('#demo-04', 'demo-04')">disconnect</button>
+          <button type="button" title="重新开始观察" onclick="reconnect('#demo-04', 'demo-04')">reconnect</button>
+          <button type="button" title="移除观察" onclick="remove('#demo-04', 'demo-04')">remove</button>
+        </div>
+        <div class="content">
+          <div class="left">
+            <div id="demo-04"></div>
+            <button type="button" id="demo-04-btn">添加节点</button>
+          </div>
+          <div class="right">
+            <pre id="demo-04-mobserver"></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script type="text/javascript">
+      
+      // 将 mutationList 显示到页面
+      function showMutationList(target, data = {}) {
+        let el = document.querySelector(target)
+        data = data.map(row => {
+          let temp = {}
+          for(let k in row) {
+            if (['addedNodes', 'removedNodes'].includes(k)) {
+              temp[k] = []
+              row[k].forEach(e => {
+                temp[k].push(e.id ? `nodeId: ${e.id}` : `nodeName: ${e.nodeName}`)
+              })
+            } else if ('target' === k) {
+              temp[k] = row[k].id ? `nodeId: ${row[k].id}` : `nodeName: ${row[k].nodeName}`
+            } else if (['previousSibling', 'nextSibling'].includes(k)) {
+              if (row[k]) {
+                temp[k] = row[k].id ? `nodeId: ${row[k].id}` : `nodeName: ${row[k].nodeName}`
+              } else {
+                temp[k] = `${row[k]}`
+              }
+            } else {
+              temp[k] = `${row[k]}`
+            }
+          }
+          return temp
+        })
+        el.innerText = JSON.stringify(data, undefined, 2)
+      }
+      
+      // 停止观察
+      function disconnect(target, name) {
+        observer.disconnect(target, name)
+      }
+      
+      // 重新开始观察
+      function reconnect(target, name) {
+        observer.reconnect(target, name)
+      }
+      
+      // 移除观察
+      function remove(target, name) {
+        observer.remove(target, name)
+      }
+      
+      function listen(target, event, callback) {
+        document.querySelector(target).addEventListener(event, callback, false)
+      }
+      
+      let observer = MObserver.observe
+      let demo1 = document.querySelector('#demo-01')
+      
+      // 监视指定目标节点或子节点树中节点所包含的字符数据的变化
+      observer('#demo-01', function(list) {
+        showMutationList('#demo-01-mobserver', list)
+      }, { attributes: true, childList: true, subtree: true }, 'demo-01')
+    </script>
+	</body>
+</html>
