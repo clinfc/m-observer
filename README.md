@@ -207,16 +207,16 @@ character('#demo', function(mutationsList) {
 ## takeRecords、disconnect、reconnect
 
 * takeRecords：
-  1. 从MutationObserver的通知队列中删除所有待处理的通知，并将它们返回到MutationRecord对象的新Array中
-  2. 语法：`takeRecords(target, callback)`
+  * 从MutationObserver的通知队列中删除所有待处理的通知，并将它们返回到MutationRecord对象的新Array中
+  * 语法：`takeRecords(target, callback)`
 
 * disconnect：暂停观察者观察活动
-  1. 阻止 MutationObserver 实例继续接收的通知，该观察者对象包含的回调函数不会再被调用
-  2. 语法：`disconnect(target, callback)`
+  * 阻止 MutationObserver 实例继续接收的通知，该观察者对象包含的回调函数不会再被调用
+  * 语法：`disconnect(target, callback)`
 
 * reconnect：重启观察者观察活动
-  1. 重新允许 MutationObserver 实例继续接收的通知，该观察者对象包含的回调函数将继续被调用
-  2. 语法：`reconnect(target, callback)`
+  * 重新允许 MutationObserver 实例继续接收的通知，该观察者对象包含的回调函数将继续被调用
+  * 语法：`reconnect(target, callback)`
 
 
 #### 参数
