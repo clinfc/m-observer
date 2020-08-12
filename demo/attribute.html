@@ -11,14 +11,17 @@
     <div class="container">
       <div class="demo-item">
         <div class="header">
-          <div class="title">observe</div>
+          <div class="title">attribute</div>
           <button type="button" title="停止观察" onclick="disconnect('#demo-01', listener)">disconnect</button>
           <button type="button" title="重新开始观察" onclick="reconnect('#demo-01', listener)">reconnect</button>
           <button type="button" title="移除观察" onclick="remove('#demo-01', listener)">remove</button>
         </div>
         <div class="content">
           <div class="left">
-            <div id="demo-01" class="editor" contenteditable="true"></div>
+            <div id="demo-01" class="editor">
+              <p><input type="text" autocomplete="off" id="title" value="" placeholder="修改 title 属性值" /></p>
+              <p><input type="color" autocomplete="off" id="bgcolor" value="" placeholder="修改 title 属性值" /></p>
+            </div>
           </div>
           <div class="right">
             <pre id="demo-01-mobserver"></pre>
@@ -27,17 +30,23 @@
       </div>
     </div>
     <script type="text/javascript">
+      const demo = document.querySelector('#demo-01')
+      const title = document.querySelector('#title')
+      const bgcolor = document.querySelector('#bgcolor')
+      
+      title.addEventListener('input', function() {
+        demo.title = title.value
+      })
+      
+      bgcolor.addEventListener('change', function() {
+        demo.style.backgroundColor = bgcolor.value
+      })
+      
       function listener(list) {
         showMutationList('#demo-01-mobserver', list)
       }
-      MObserver.observe('#demo-01', listener, { 
-        attributes: true,
-        attributeOldValue: true, 
-        childList: true, 
-        subtree: true, 
-        characterData: true, 
-        characterDataOldValue: true ,
-      })
+      
+      MObserver.attribute(demo, listener)
     </script>
 	</body>
 </html>

@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="utf-8">
 		<title></title>
-    <script src="../dist/index.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../dist/index.js" type="text/javascript" charset="utf-8"></script>
     <script src="./common.js" type="text/javascript" charset="utf-8"></script>
     <link rel="stylesheet" type="text/css" href="./common.css"/>
 	</head>
@@ -11,10 +11,10 @@
     <div class="container">
       <div class="demo-item">
         <div class="header">
-          <div class="title">observeAll</div>
-          <button type="button" title="停止观察" onclick="disconnect('#demo-01', 'observe')">disconnect</button>
-          <button type="button" title="重新开始观察" onclick="reconnect('#demo-01', 'observe')">reconnect</button>
-          <button type="button" title="移除观察" onclick="remove('#demo-01', 'observe')">remove</button>
+          <div class="title">character</div>
+          <button type="button" title="停止观察" onclick="disconnect('#demo-01', listener)">disconnect</button>
+          <button type="button" title="重新开始观察" onclick="reconnect('#demo-01', listener)">reconnect</button>
+          <button type="button" title="移除观察" onclick="remove('#demo-01', listener)">remove</button>
         </div>
         <div class="content">
           <div class="left">
@@ -27,9 +27,10 @@
       </div>
     </div>
     <script type="text/javascript">
-      MObserver.observeAll('#demo-01', 'observe', function(list) {
+      function listener(list) {
         showMutationList('#demo-01-mobserver', list)
-      })
+      }
+      MObserver.character('#demo-01', listener)
     </script>
 	</body>
 </html>

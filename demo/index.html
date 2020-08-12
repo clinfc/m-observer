@@ -20,10 +20,7 @@
       }
       .menu {
         width: 220px;
-        height: 100%;
         flex-shrink: 0;
-        overflow-x: hidden;
-        overflow-y: scroll;
         margin-top: 10px;
         padding-left: 20px;
         box-sizing: border-box;
@@ -38,8 +35,6 @@
       .ifram {
         height: 100%;
         flex: 1;
-        overflow-x: hidden;
-        overflow-y: scroll;
       }
     </style>
 	</head>
@@ -47,17 +42,13 @@
     <div class="main">
       <div class="menu">
         <a href="./observe.html">observe</a>
-        <a href="./observeAll.html">observeAll</a>
         <a href="./attribute.html">attribute</a>
-        <a href="./attributeChild.html">attributeChild</a>
         <a href="./attributeFilter.html">attributeFilter</a>
-        <a href="./attributeFilterChild.html">attributeFilterChild</a>
-        <a href="./node.html">node</a>
-        <a href="./nodeChild.html">nodeChild</a>
+        <a href="./childList.html">childList</a>
         <a href="./character.html">character</a>
       </div>
       <div class="ifram">
-        <iframe src="observe.html" width="940px" height="100%" id="ifram"></iframe>
+        <iframe src="observe.html" width="100%" height="100%" id="ifram"></iframe>
       </div>
     </div>
     <script type="text/javascript">

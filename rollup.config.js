@@ -26,7 +26,7 @@ if (IS_PRODUCTION) {
 else {
   plugins.unshift(eslint({
     fix: true,
-    // throwOnError: true
+    throwOnError: true
   }))
 }
 
@@ -41,7 +41,6 @@ module.exports = {
   },
   plugins: plugins,
   external: [
-    'core-js/modules/es.object.assign',
     'core-js/modules/web.dom-collections.iterator'
   ]
 }

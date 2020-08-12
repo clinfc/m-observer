@@ -27,20 +27,16 @@ function showMutationList(target, data = {}) {
 }
 
 // 停止观察
-function disconnect(target, name) {
-  MObserver.disconnect(target, name)
+function disconnect(target, callback) {
+  MObserver.disconnect(target, callback)
 }
 
 // 重新开始观察
-function reconnect(target, name) {
-  MObserver.reconnect(target, name)
+function reconnect(target, callback) {
+  MObserver.reconnect(target, callback)
 }
 
 // 移除观察
-function remove(target, name) {
-  MObserver.remove(target, name)
-}
-
-function listen(target, event, callback) {
-  document.querySelector(target).addEventListener(event, callback, false)
+function remove(target, callback) {
+  MObserver.remove(target, callback)
 }
