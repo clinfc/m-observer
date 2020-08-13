@@ -4,12 +4,12 @@
 
 # NPM
 
-#### Install
+### Install
 ```
 npm install m-observer -S
 ```
 
-#### Example
+### Example
 ```html
 <div id="demo"></div>
 ```
@@ -26,9 +26,9 @@ attribute(demo, 'attribute-demo', function(mutationsList, observer) {
 })
 ```
 
-# SCRIPT
+# Script
 
-#### Example
+### Example
 ```html
 <div id="demo"></div>
 
@@ -47,29 +47,33 @@ attribute(demo, 'attribute-demo', function(mutationsList, observer) {
 import * as MObserver from 'm-observer'
 
 MObserver.observe(target, callback, config)
+
 MObserver.attribute(target, callback[, subtree])
+
 MObserver.attributeFilter(target, callback, filter[, subtree])
+
 MObserver.childList(target, callback[, subtree])
+
 MObserver.character(target, callback)
+
 MObserver.takeRecords(target, callback)
+
 MObserver.disconnect(target, callback)
+
 MObserver.reconnect(target, callback)
+
 MObserver.remove(target, callback)
 ```
 
 
 
-## observe
+## observe(target, callbck, config)
 
 配置MutationObserver在DOM更改匹配给定选项时，通过其回调函数开始接收通知
 
 config 配置项中，childList，attributes 或者 characterData 三个属性之中，至少有一个必须为 true，否则会抛出 TypeError 异常
 
-#### 语法
-
-`observe(target, callbck, config)`
-
-#### 参数
+### 参数
 
 参数|说明|类型|默认值
 :-|:-|:-|:-
@@ -77,7 +81,7 @@ config 配置项中，childList，attributes 或者 characterData 三个属性�
 `callback`|当观察到变动时执行的回调函数|`Function<mutationsList[, observer]>`|
 `config`|观察器的配置|`Object`|
 
-#### 示例
+### 示例
 
 ```js
 import { observe } from 'm-observer'
@@ -92,15 +96,11 @@ observe('#demo', function(mutationsList) {
 
 
 
-## attribute
+## attribute(target, callback[, subtree])
 
 观察受监视元素的 *属性值* 的变更
 
-#### 语法
-
-`attribute(target, callback[, subtree])`
-
-#### 参数
+### 参数
 
 参数|说明|类型|默认值
 :-|:-|:-|:-
@@ -108,7 +108,7 @@ observe('#demo', function(mutationsList) {
 `callback`|当观察到变动时执行的回调函数|`Function<mutationsList[, observer]>`|
 `subtree`|是否将监视范围扩展至目标节点整个节点树中的所有节点|`Boolean`|`false`
 
-#### 示例
+### 示例
 
 ```js
 import { attribute } from 'm-observer'
@@ -120,15 +120,11 @@ attribute('#demo', function(mutationsList) {
 
 
 
-## attributeFilter
+## attributeFilter(target, callback, filter[, subtree])
 
 观察受监视元素的 *指定属性值* 的变更
 
-#### 语法
-
-`attributeFilter(target, callback, filter[, subtree])`
-
-#### 参数
+### 参数
 
 参数|说明|类型|默认值
 :-|:-|:-|:-
@@ -137,7 +133,7 @@ attribute('#demo', function(mutationsList) {
 `filter`|要监视的特定属性名称的数组|`Array`|
 `subtree`|是否将监视范围扩展至目标节点整个节点树中的所有节点|`Boolean`|`false`
 
-#### 示例
+### 示例
 
 ```js
 import { attributeFilter } from 'm-observer'
@@ -149,15 +145,11 @@ attributeFilter('#demo', function(mutationsList) {
 
 
 
-## childList
+## childList(target, callback[, subtree])
 
 监视目标节点添加或删除新的子节点
 
-#### 语法
-
-`childList(target, callback[, subtree])`
-
-#### 参数
+### 参数
 
 参数|说明|类型|默认值
 :-|:-|:-|:-
@@ -165,7 +157,7 @@ attributeFilter('#demo', function(mutationsList) {
 `callback`|当观察到变动时执行的回调函数|`Function<mutationsList[, observer]>`|
 `subtree`|是否将监视范围扩展至目标节点整个节点树中的所有节点|`Boolean`|`false`
 
-#### 示例
+### 示例
 
 ```js
 import { childList } from 'm-observer'
@@ -177,22 +169,18 @@ childList('#demo', function(mutationsList) {
 
 
 
-## character
+## character(target, callback)
 
 监视指定目标节点或子节点树中节点所包含的字符数据的变化
 
-#### 语法
-
-`character(target, callback)`
-
-#### 参数
+### 参数
 
 参数|说明|类型|默认值
 :-|:-|:-|:-
 `target`|需要观察变动的节点|`String/Element/Node`|
 `callback`|当观察到变动时执行的回调函数|`Function<mutationsList[, observer]>`|
 
-#### 示例
+### 示例
 
 ```js
 import { character } from 'm-observer'
@@ -219,14 +207,14 @@ character('#demo', function(mutationsList) {
   * 语法：`reconnect(target, callback)`
 
 
-#### 参数
+### 参数
 
 参数|说明|类型|默认值
 :-|:-|:-|:-
 `target`|需要观察变动的节点|`String/Element/Node`|
 `callback`|当观察到变动时执行的回调函数|`Function<mutationsList[, observer]>`|
 
-#### 示例
+### 示例
 
 ```js
 import { attribute, takeRecords, disconnect, reconnect } from 'm-observer'
@@ -250,22 +238,18 @@ reconnect('#demo', listener)
 
 
 
-## remove
+## remove(target, callback)
 
 停止观察变动并永久性移除观察者，调用此方法后，无法通过 `reconnect` 重启观察者
 
-#### 语法
-
-`remove(target, callback)`
-
-#### 参数
+### 参数
 
 参数|说明|类型|默认值
 :-|:-|:-|:-
 `target`|需要观察变动的节点|`String/Element/Node`|
 `callback`|当观察到变动时执行的回调函数|`Function<mutationsList[, observer]>`|
 
-#### 示例
+### 示例
 
 ```js
 import { attribute, remove } from 'm-observer'
