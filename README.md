@@ -2,7 +2,7 @@
 
 > 对 MutationObserver 的简单封装
 
-# NPM
+# 在 NPM 中使用
 
 ### Install
 ```
@@ -16,17 +16,17 @@ npm install m-observer -S
 ```js
 const { attribute } = require('m-observer')
 
-attribute('#demo', 'attribute-demo', function(mutationsList, observer) {
+attribute('#demo', function(mutationsList, observer) {
   console.log(mutationsList)
 })
 // or
 const demo = document.querySelector('#demo')
-attribute(demo, 'attribute-demo', function(mutationsList, observer) {
+attribute(demo, function(mutationsList, observer) {
   console.log(mutationsList)
 })
 ```
 
-# Script
+# 在 Script 中使用
 
 ### Example
 ```html
@@ -34,7 +34,7 @@ attribute(demo, 'attribute-demo', function(mutationsList, observer) {
 
 <script src="./js/m-observer/dist/index.min.js"></script>
 <script>
-  MObserver.attribute('#demo', 'attribute-demo', function(mutationsList, observer) {
+  MObserver.attribute('#demo', function(mutationsList, observer) {
     console.log(mutationsList)
   })
 </script>
@@ -71,7 +71,7 @@ MObserver.remove(target, callback)
 
 配置MutationObserver在DOM更改匹配给定选项时，通过其回调函数开始接收通知
 
-config 配置项中，childList，attributes 或者 characterData 三个属性之中，至少有一个必须为 true，否则会抛出 TypeError 异常
+config [配置项](https://developer.mozilla.org/zh-CN/docs/Web/API/MutationObserverInit)中，childList，attributes 或者 characterData 三个属性之中，至少有一个必须为 true，否则会抛出 TypeError 异常
 
 ### 参数
 
@@ -87,7 +87,8 @@ config 配置项中，childList，attributes 或者 characterData 三个属性�
 import { observe } from 'm-observer'
 
 // 观察器的配置（需要观察什么变动）
-const config = { attributes: true, childList: true, subtree: true }
+// 更多配置项见：https://developer.mozilla.org/zh-CN/docs/Web/API/MutationObserverInit
+const config = { attributes: true, subtree: true }
 
 observe('#demo', function(mutationsList) {
   console.log(mutationsList)
@@ -105,7 +106,7 @@ observe('#demo', function(mutationsList) {
 参数|说明|类型|默认值
 :-|:-|:-|:-
 `target`|需要观察变动的节点|`String/Element/Node`|
-`callback`|当观察到变动时执行的回调函数|`Function<mutationsList[, observer]>`|
+`callback`|当观察到变动时执行的回调函数|`Function<[mutationsList[, observer]]>`|
 `subtree`|是否将监视范围扩展至目标节点整个节点树中的所有节点|`Boolean`|`false`
 
 ### 示例
@@ -129,7 +130,7 @@ attribute('#demo', function(mutationsList) {
 参数|说明|类型|默认值
 :-|:-|:-|:-
 `target`|需要观察变动的节点|`String/Element/Node`|
-`callback`|当观察到变动时执行的回调函数|`Function<mutationsList[, observer]>`|
+`callback`|当观察到变动时执行的回调函数|`Function<[mutationsList[, observer]]>`|
 `filter`|要监视的特定属性名称的数组|`Array`|
 `subtree`|是否将监视范围扩展至目标节点整个节点树中的所有节点|`Boolean`|`false`
 
@@ -154,7 +155,7 @@ attributeFilter('#demo', function(mutationsList) {
 参数|说明|类型|默认值
 :-|:-|:-|:-
 `target`|需要观察变动的节点|`String/Element/Node`|
-`callback`|当观察到变动时执行的回调函数|`Function<mutationsList[, observer]>`|
+`callback`|当观察到变动时执行的回调函数|`Function<[mutationsList[, observer]]>`|
 `subtree`|是否将监视范围扩展至目标节点整个节点树中的所有节点|`Boolean`|`false`
 
 ### 示例
@@ -178,7 +179,7 @@ childList('#demo', function(mutationsList) {
 参数|说明|类型|默认值
 :-|:-|:-|:-
 `target`|需要观察变动的节点|`String/Element/Node`|
-`callback`|当观察到变动时执行的回调函数|`Function<mutationsList[, observer]>`|
+`callback`|当观察到变动时执行的回调函数|`Function<[mutationsList[, observer]]>`|
 
 ### 示例
 
@@ -212,7 +213,7 @@ character('#demo', function(mutationsList) {
 参数|说明|类型|默认值
 :-|:-|:-|:-
 `target`|需要观察变动的节点|`String/Element/Node`|
-`callback`|当观察到变动时执行的回调函数|`Function<mutationsList[, observer]>`|
+`callback`|当观察到变动时执行的回调函数|`Function<[mutationsList[, observer]]>`|
 
 ### 示例
 
@@ -247,7 +248,7 @@ reconnect('#demo', listener)
 参数|说明|类型|默认值
 :-|:-|:-|:-
 `target`|需要观察变动的节点|`String/Element/Node`|
-`callback`|当观察到变动时执行的回调函数|`Function<mutationsList[, observer]>`|
+`callback`|当观察到变动时执行的回调函数|`Function<[mutationsList[, observer]]>`|
 
 ### 示例
 
