@@ -1,29 +1,26 @@
 // 将 mutationList 显示到页面
 function showMutationList(target, data = {}) {
   let el = document.querySelector(target)
-  data = data.map(row => {
-    let temp = {}
-    for (let k in row) {
-      if (['addedNodes', 'removedNodes'].includes(k)) {
-        temp[k] = []
-        row[k].forEach(e => {
-          temp[k].push(e.id ? `nodeId: ${e.id}` : `nodeName: ${e.nodeName}`)
-        })
-      } else if ('target' === k) {
-        temp[k] = row[k].id ? `nodeId: ${row[k].id}` : `nodeName: ${row[k].nodeName}`
-      } else if (['previousSibling', 'nextSibling'].includes(k)) {
-        if (row[k]) {
-          temp[k] = row[k].id ? `nodeId: ${row[k].id}` : `nodeName: ${row[k].nodeName}`
-        } else {
-          temp[k] = `${row[k]}`
-        }
+  let temp = {}
+  for (let k in data) {
+    if (['addedNodes', 'removedNodes'].includes(k)) {
+      temp[k] = []
+      data[k].forEach(e => {
+        temp[k].push(e.outerHTML)
+      })
+    } else if ('target' === k) {
+      temp[k] = data[k].outerHTML
+    } else if (['previousSibling', 'nextSibling'].includes(k)) {
+      if (data[k]) {
+        temp[k] = data[k].outerHTML
       } else {
-        temp[k] = `${row[k]}`
+        temp[k] = `${data[k]}`
       }
+    } else {
+      temp[k] = `${data[k]}`
     }
-    return temp
-  })
-  el.innerText = JSON.stringify(data, undefined, 2)
+  }
+  el.innerText = JSON.stringify(temp, undefined, 2)
 }
 
 // 停止观察
