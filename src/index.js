@@ -16,13 +16,15 @@ function initData(el) {
 }
 
 // 保存数据
-function setData(el, callback, config, observer) {
-  let data = initData(el)
-  let old = data.get(callback)
+function setData(el, callback, data) {
+  let da = initData(el)
+  let old = da.get(callback)
   if (old && old.observer) {
+    let list = old.observer.takeRecords()
+    old.callback(list, old.observer)
     old.observer.disconnect()
   }
-  data.set(callback, { callback, config, observer })
+  da.set(callback, data)
 }
 
 
@@ -43,17 +45,20 @@ function getData(el, callback, clean = false) {
  * @param {Element|Node|String} target 被监听的节点  
  * @param {Function} callback 当观察到变动时执行的回调函数
  * @param {Object} config MutationObserverInit字典配置项
- * @return {observer} MutationObserver实例
  */
 export function observe(target, callback, config) {
   let el = selector(target)
   if (!fns.isFunction(callback)) {
     throw new Error('无效的观察回到函数！')
   }
-  let observer = new MutationObserver(callback)
+  let fn = function(mutationsList, ob) {
+    for(let mutationRecord of mutationsList) {
+      callback(mutationRecord, ob)
+    }
+  }
+  let observer = new MutationObserver(fn)
   observer.observe(el.el, config)
-  setData(el, callback, config, observer)
-  return observer
+  setData(el, callback, { config, fn, observer })
 }
 
 /**
@@ -62,7 +67,6 @@ export function observe(target, callback, config) {
  * @param {Element|Node|String} target 被监听的节点  
  * @param {Function} callback 当观察到变动时执行的回调函数
  * @param {Boolean} subtree 是否观察子节点
- * @return {observer} MutationObserver实例
  */
 export function attribute(target, callback, subtree = false) {
   let config = {
@@ -70,7 +74,7 @@ export function attribute(target, callback, subtree = false) {
     attributes: true,
     attributeOldValue: true
   }
-  return observe(target, callback, config)
+  observe(target, callback, config)
 }
 
 /**
@@ -80,7 +84,6 @@ export function attribute(target, callback, subtree = false) {
  * @param {Function} callback 当观察到变动时执行的回调函数
  * @param {Array} filter 要监视的特定属性名称的数组。如果未包含此属性，则对所有属性的更改都会触发变动通知
  * @param {Boolean} subtree 是否观察子节点
- * @return {observer} MutationObserver实例
  */
 export function attributeFilter(target, callback, filter, subtree = false) {
   let config = {
@@ -89,7 +92,7 @@ export function attributeFilter(target, callback, filter, subtree = false) {
     attributeFilter: filter,
     attributeOldValue: true
   }
-  return observe(target, callback, config)
+  observe(target, callback, config)
 }
 
 /**
@@ -98,14 +101,13 @@ export function attributeFilter(target, callback, filter, subtree = false) {
  * @param {Element|Node|String} target 被监听的节点 
  * @param {Function} callback 当观察到变动时执行的回调函数
  * @param {Boolean} subtree 是否观察子节点
- * @return {observer} MutationObserver实例
  */
 export function childList(target, callback, subtree = false) {
   let config = {
     subtree: !!subtree,
     childList: true,
   }
-  return observe(target, callback, config)
+  observe(target, callback, config)
 }
 
 /**
@@ -113,7 +115,6 @@ export function childList(target, callback, subtree = false) {
  * 
  * @param {Element|Node|String} target 被监听的节点
  * @param {Function} callback 当观察到变动时执行的回调函数
- * @return {observer} MutationObserver实例
  */
 export function character(target, callback) {
   let config = {
@@ -121,23 +122,7 @@ export function character(target, callback) {
     characterData: true,
     characterDataOldValue: true,
   }
-  return observe(target, callback, config)
-}
-
-/**
- * 从MutationObserver的通知队列中删除所有待处理的通知，并将它们返回到MutationRecord对象的新Array中
- * 
- * @param {Element|Node|String} target  
- * @param {Function} callback 当观察到变动时执行的回调函数
- * @return {Array}
- */
-export function takeRecords(target, callback) {
-  let el = selector(target)
-  let { observer } = getData(el, callback)
-  if (observer instanceof MutationObserver) {
-    return observer.takeRecords()
-  }
-  return []
+  observe(target, callback, config)
 }
 
 /**
@@ -145,17 +130,15 @@ export function takeRecords(target, callback) {
  * 
  * @param {Element|Node|String} target 被监听的节点 
  * @param {Function} callback 当观察到变动时执行的回调函数
- * @return {Array}
  */
 export function disconnect(target, callback) {
   let el = selector(target)
-  let { observer } = getData(el, callback)
-  let temp = []
-  if (observer) {
-    temp = observer.takeRecords()
+  let { observer, fn } = getData(el, callback)
+  if (fns.isMO(observer)) {
+    let list = observer.takeRecords()
+    fn(list, observer)
     observer.disconnect()
   }
-  return temp
 }
 
 /**
@@ -163,16 +146,14 @@ export function disconnect(target, callback) {
  * 
  * @param {Element|Node|String} target 被监听的节点 
  * @param {Function} callback 当观察到变动时执行的回调函数
- * @return {observer} MutationObserver实例
  */
 export function reconnect(target, callback) {
   let el = selector(target)
   let { observer, config } = getData(el, callback)
-  if (!(observer instanceof MutationObserver)) {
+  if (!fns.isMO(observer)) {
     throw new Error('该监听器不存在（未定义或已被移除）！')
   }
   observer.observe(el.el, config)
-  return observer
 }
 
 /**
@@ -180,15 +161,13 @@ export function reconnect(target, callback) {
  * 
  * @param {Element|Node|String} target 被监听的节点 
  * @param {Function} callback 当观察到变动时执行的回调函数
- * @return {Array}
  */
 export function remove(target, callback) {
   let el = selector(target)
-  let { observer } = getData(el, callback, true)
-  if (observer instanceof MutationObserver) {
-    let temp = observer.takeRecords()
+  let { observer, fn } = getData(el, callback, true)
+  if (fns.isMO(observer)) {
+    let list = observer.takeRecords()
+    fn(list, observer)
     observer.disconnect()
-    return temp
   }
-  return []
 }

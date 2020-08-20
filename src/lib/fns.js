@@ -1,6 +1,3 @@
-// 空函数
-export function emptyFn() {}
-
 // 类型判断：函数
 export function isFunction(target) {
   return typeof target === 'function'
@@ -19,4 +16,9 @@ export function isNode(target) {
 // 类型判断：Element 元素
 export function isElement(target) {
   return target instanceof Element
+}
+
+// 类型判断：MutationObserver 实例
+export function isMO(target) {
+  return target instanceof MutationObserver
 }
