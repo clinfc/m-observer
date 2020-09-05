@@ -42,9 +42,9 @@ function getData(el, callback, clean = false) {
 /**
  * childList，attributes 或者 characterData 三个属性之中，至少有一个必须为 true，否则会抛出 TypeError 异常
  * 
- * @param {Element|Node|String} target 被监听的节点  
- * @param {Function} callback 当观察到变动时执行的回调函数
- * @param {Object} config MutationObserverInit字典配置项
+ * @param {Element|Node|String} target - 被监听的节点  
+ * @param {Function} callback - 当观察到变动时执行的回调函数
+ * @param {Object} config - MutationObserverInit字典配置项
  */
 export function observe(target, callback, config) {
   let el = selector(target)
@@ -62,11 +62,33 @@ export function observe(target, callback, config) {
 }
 
 /**
+ * MutationObserverInit 字典配置项（除 attributeFilter 外）都被设置为 true
+ * 
+ * @param {Element|Node|String} target - 被监听的节点  
+ * @param {Function} callback - 当观察到变动时执行的回调函数
+ * @param {Array} config - MutationObserverInit.attributeFilter 配置项
+ */
+export function observeAll(target, callback, filter) {
+  let config = {
+    subtree: true,
+    childList: true,
+    attributes: true,
+    attributeOldValue: true,
+    characterData: true,
+    characterDataOldValue: true,
+  }
+  if (Array.isArray(filter)) {
+    config.attributeFilter = filter
+  }
+  observe(target, callback, config)
+}
+
+/**
  * 监听元素的属性值变更
  * 
- * @param {Element|Node|String} target 被监听的节点  
- * @param {Function} callback 当观察到变动时执行的回调函数
- * @param {Boolean} subtree 是否观察子节点
+ * @param {Element|Node|String} target - 被监听的节点  
+ * @param {Function} callback - 当观察到变动时执行的回调函数
+ * @param {Boolean} subtree - 是否观察子节点
  */
 export function attribute(target, callback, subtree = false) {
   let config = {
@@ -80,10 +102,10 @@ export function attribute(target, callback, subtree = false) {
 /**
  * 监听元素的特定属性名称
  * 
- * @param {Element|Node|String} target 被监听的节点
- * @param {Function} callback 当观察到变动时执行的回调函数
- * @param {Array} filter 要监视的特定属性名称的数组。如果未包含此属性，则对所有属性的更改都会触发变动通知
- * @param {Boolean} subtree 是否观察子节点
+ * @param {Element|Node|String} target - 被监听的节点
+ * @param {Function} callback - 当观察到变动时执行的回调函数
+ * @param {Array} filter - MutationObserverInit.attributeFilter 配置项
+ * @param {Boolean} subtree - 是否观察子节点
  */
 export function attributeFilter(target, callback, filter, subtree = false) {
   let config = {
@@ -98,9 +120,9 @@ export function attributeFilter(target, callback, filter, subtree = false) {
 /**
  * 监视目标节点的子节点的添加或删除
  * 
- * @param {Element|Node|String} target 被监听的节点 
- * @param {Function} callback 当观察到变动时执行的回调函数
- * @param {Boolean} subtree 是否观察子节点
+ * @param {Element|Node|String} target - 被监听的节点 
+ * @param {Function} callback - 当观察到变动时执行的回调函数
+ * @param {Boolean} subtree - 是否观察子节点
  */
 export function childList(target, callback, subtree = false) {
   let config = {
@@ -113,8 +135,8 @@ export function childList(target, callback, subtree = false) {
 /**
  * 监视指定目标节点或子节点树中节点所包含的字符数据的变化
  * 
- * @param {Element|Node|String} target 被监听的节点
- * @param {Function} callback 当观察到变动时执行的回调函数
+ * @param {Element|Node|String} target - 被监听的节点
+ * @param {Function} callback - 当观察到变动时执行的回调函数
  */
 export function character(target, callback) {
   let config = {
@@ -128,8 +150,8 @@ export function character(target, callback) {
 /**
  * 告诉观察者停止观察变动，返回还未处理的通知
  * 
- * @param {Element|Node|String} target 被监听的节点 
- * @param {Function} callback 当观察到变动时执行的回调函数
+ * @param {Element|Node|String} target - 被监听的节点 
+ * @param {Function} callback - 当观察到变动时执行的回调函数
  */
 export function disconnect(target, callback) {
   let el = selector(target)
@@ -144,8 +166,8 @@ export function disconnect(target, callback) {
 /**
  * 告诉观察者重新开始观察行为
  * 
- * @param {Element|Node|String} target 被监听的节点 
- * @param {Function} callback 当观察到变动时执行的回调函数
+ * @param {Element|Node|String} target - 被监听的节点 
+ * @param {Function} callback - 当观察到变动时执行的回调函数
  */
 export function reconnect(target, callback) {
   let el = selector(target)
@@ -159,8 +181,8 @@ export function reconnect(target, callback) {
 /**
  * 移除观察者，返回还未处理的通知
  * 
- * @param {Element|Node|String} target 被监听的节点 
- * @param {Function} callback 当观察到变动时执行的回调函数
+ * @param {Element|Node|String} target - 被监听的节点 
+ * @param {Function} callback - 当观察到变动时执行的回调函数
  */
 export function remove(target, callback) {
   let el = selector(target)
