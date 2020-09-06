@@ -111,25 +111,26 @@
   /**
    * childList，attributes 或者 characterData 三个属性之中，至少有一个必须为 true，否则会抛出 TypeError 异常
    * 
-   * @param {Element|Node|String} target 被监听的节点  
-   * @param {Function} callback 当观察到变动时执行的回调函数
-   * @param {Object} config MutationObserverInit字典配置项
+   * @param {Element|Node|String} target - 被监听的节点  
+   * @param {Function} callback - 当观察到变动时执行的回调函数
+   * @param {Object} config - MutationObserverInit字典配置项
+   * @param {Boolean} isRecordList - 当为 true 时，回调函数第一个参数为 mutationRecordList，当为 false 时，回调函数第一个参数为 mutationRecord
    */
 
 
   function observe(target, callback, config) {
+    let isRecordList = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
     let el = selector(target);
 
     if (!isFunction(callback)) {
       throw new Error('无效的观察回到函数！');
     }
 
-    let fn = function fn(mutationsList, ob) {
+    let fn = isRecordList ? callback : function (mutationsList, ob) {
       for (let mutationRecord of mutationsList) {
         callback(mutationRecord, ob);
       }
     };
-
     let observer = new MutationObserver(fn);
     observer.observe(el.el, config);
     setData(el, callback, {
@@ -139,77 +140,112 @@
     });
   }
   /**
+   * MutationObserverInit 字典配置项（除 attributeFilter 外）都被设置为 true
+   * 
+   * @param {Element|Node|String} target - 被监听的节点  
+   * @param {Function} callback - 当观察到变动时执行的回调函数
+   * @param {Array} config - MutationObserverInit.attributeFilter 配置项
+   * @param {Boolean} isRecordList - 当为 true 时，回调函数第一个参数为 mutationRecordList，当为 false 时，回调函数第一个参数为 mutationRecord
+   */
+
+  function observeAll(target, callback) {
+    let filter = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
+    let isRecordList = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
+    let config = {
+      subtree: true,
+      childList: true,
+      attributes: true,
+      attributeOldValue: true,
+      characterData: true,
+      characterDataOldValue: true
+    };
+
+    if (Array.isArray(filter)) {
+      config.attributeFilter = filter;
+    }
+
+    observe(target, callback, config, isRecordList);
+  }
+  /**
    * 监听元素的属性值变更
    * 
-   * @param {Element|Node|String} target 被监听的节点  
-   * @param {Function} callback 当观察到变动时执行的回调函数
-   * @param {Boolean} subtree 是否观察子节点
+   * @param {Element|Node|String} target - 被监听的节点  
+   * @param {Function} callback - 当观察到变动时执行的回调函数
+   * @param {Boolean} subtree - 是否观察子节点
+   * @param {Boolean} isRecordList - 当为 true 时，回调函数第一个参数为 mutationRecordList，当为 false 时，回调函数第一个参数为 mutationRecord
    */
 
   function attribute(target, callback) {
     let subtree = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+    let isRecordList = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
     let config = {
       subtree: !!subtree,
       attributes: true,
       attributeOldValue: true
     };
-    observe(target, callback, config);
+    observe(target, callback, config, isRecordList);
   }
   /**
    * 监听元素的特定属性名称
    * 
-   * @param {Element|Node|String} target 被监听的节点
-   * @param {Function} callback 当观察到变动时执行的回调函数
-   * @param {Array} filter 要监视的特定属性名称的数组。如果未包含此属性，则对所有属性的更改都会触发变动通知
-   * @param {Boolean} subtree 是否观察子节点
+   * @param {Element|Node|String} target - 被监听的节点
+   * @param {Function} callback - 当观察到变动时执行的回调函数
+   * @param {Array} filter - MutationObserverInit.attributeFilter 配置项
+   * @param {Boolean} subtree - 是否观察子节点
+   * @param {Boolean} isRecordList - 当为 true 时，回调函数第一个参数为 mutationRecordList，当为 false 时，回调函数第一个参数为 mutationRecord
    */
 
   function attributeFilter(target, callback, filter) {
     let subtree = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
+    let isRecordList = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : false;
     let config = {
       subtree: !!subtree,
       attributes: true,
       attributeFilter: filter,
       attributeOldValue: true
     };
-    observe(target, callback, config);
+    observe(target, callback, config, isRecordList);
   }
   /**
    * 监视目标节点的子节点的添加或删除
    * 
-   * @param {Element|Node|String} target 被监听的节点 
-   * @param {Function} callback 当观察到变动时执行的回调函数
-   * @param {Boolean} subtree 是否观察子节点
+   * @param {Element|Node|String} target - 被监听的节点 
+   * @param {Function} callback - 当观察到变动时执行的回调函数
+   * @param {Boolean} subtree - 是否观察子节点
+   * @param {Boolean} isRecordList - 当为 true 时，回调函数第一个参数为 mutationRecordList，当为 false 时，回调函数第一个参数为 mutationRecord
    */
 
   function childList(target, callback) {
     let subtree = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+    let isRecordList = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
     let config = {
       subtree: !!subtree,
       childList: true
     };
-    observe(target, callback, config);
+    observe(target, callback, config, isRecordList);
   }
   /**
    * 监视指定目标节点或子节点树中节点所包含的字符数据的变化
    * 
-   * @param {Element|Node|String} target 被监听的节点
-   * @param {Function} callback 当观察到变动时执行的回调函数
+   * @param {Element|Node|String} target - 被监听的节点
+   * @param {Function} callback - 当观察到变动时执行的回调函数
+   * @param {Boolean} isRecordList - 当为 true 时，回调函数第一个参数为 mutationRecordList，当为 false 时，回调函数第一个参数为 mutationRecord
    */
 
   function character(target, callback) {
+    let isRecordList = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
     let config = {
       subtree: true,
       characterData: true,
       characterDataOldValue: true
     };
-    observe(target, callback, config);
+    observe(target, callback, config, isRecordList);
   }
   /**
    * 告诉观察者停止观察变动，返回还未处理的通知
    * 
-   * @param {Element|Node|String} target 被监听的节点 
-   * @param {Function} callback 当观察到变动时执行的回调函数
+   * @param {Element|Node|String} target - 被监听的节点 
+   * @param {Function} callback - 当观察到变动时执行的回调函数
    */
 
   function disconnect(target, callback) {
@@ -228,8 +264,8 @@
   /**
    * 告诉观察者重新开始观察行为
    * 
-   * @param {Element|Node|String} target 被监听的节点 
-   * @param {Function} callback 当观察到变动时执行的回调函数
+   * @param {Element|Node|String} target - 被监听的节点 
+   * @param {Function} callback - 当观察到变动时执行的回调函数
    */
 
   function reconnect(target, callback) {
@@ -248,8 +284,8 @@
   /**
    * 移除观察者，返回还未处理的通知
    * 
-   * @param {Element|Node|String} target 被监听的节点 
-   * @param {Function} callback 当观察到变动时执行的回调函数
+   * @param {Element|Node|String} target - 被监听的节点 
+   * @param {Function} callback - 当观察到变动时执行的回调函数
    */
 
   function remove(target, callback) {
@@ -272,6 +308,7 @@
   exports.childList = childList;
   exports.disconnect = disconnect;
   exports.observe = observe;
+  exports.observeAll = observeAll;
   exports.reconnect = reconnect;
   exports.remove = remove;
 

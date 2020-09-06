@@ -45,13 +45,14 @@ function getData(el, callback, clean = false) {
  * @param {Element|Node|String} target - 被监听的节点  
  * @param {Function} callback - 当观察到变动时执行的回调函数
  * @param {Object} config - MutationObserverInit字典配置项
+ * @param {Boolean} isRecordList - 当为 true 时，回调函数第一个参数为 mutationRecordList，当为 false 时，回调函数第一个参数为 mutationRecord
  */
-export function observe(target, callback, config) {
+export function observe(target, callback, config, isRecordList = false) {
   let el = selector(target)
   if (!fns.isFunction(callback)) {
     throw new Error('无效的观察回到函数！')
   }
-  let fn = function(mutationsList, ob) {
+  let fn = isRecordList ? callback : function(mutationsList, ob) {
     for(let mutationRecord of mutationsList) {
       callback(mutationRecord, ob)
     }
@@ -67,8 +68,9 @@ export function observe(target, callback, config) {
  * @param {Element|Node|String} target - 被监听的节点  
  * @param {Function} callback - 当观察到变动时执行的回调函数
  * @param {Array} config - MutationObserverInit.attributeFilter 配置项
+ * @param {Boolean} isRecordList - 当为 true 时，回调函数第一个参数为 mutationRecordList，当为 false 时，回调函数第一个参数为 mutationRecord
  */
-export function observeAll(target, callback, filter) {
+export function observeAll(target, callback, filter = undefined, isRecordList = false) {
   let config = {
     subtree: true,
     childList: true,
@@ -80,7 +82,7 @@ export function observeAll(target, callback, filter) {
   if (Array.isArray(filter)) {
     config.attributeFilter = filter
   }
-  observe(target, callback, config)
+  observe(target, callback, config, isRecordList)
 }
 
 /**
@@ -89,14 +91,15 @@ export function observeAll(target, callback, filter) {
  * @param {Element|Node|String} target - 被监听的节点  
  * @param {Function} callback - 当观察到变动时执行的回调函数
  * @param {Boolean} subtree - 是否观察子节点
+ * @param {Boolean} isRecordList - 当为 true 时，回调函数第一个参数为 mutationRecordList，当为 false 时，回调函数第一个参数为 mutationRecord
  */
-export function attribute(target, callback, subtree = false) {
+export function attribute(target, callback, subtree = false, isRecordList = false) {
   let config = {
     subtree: !!subtree,
     attributes: true,
     attributeOldValue: true
   }
-  observe(target, callback, config)
+  observe(target, callback, config, isRecordList)
 }
 
 /**
@@ -106,15 +109,16 @@ export function attribute(target, callback, subtree = false) {
  * @param {Function} callback - 当观察到变动时执行的回调函数
  * @param {Array} filter - MutationObserverInit.attributeFilter 配置项
  * @param {Boolean} subtree - 是否观察子节点
+ * @param {Boolean} isRecordList - 当为 true 时，回调函数第一个参数为 mutationRecordList，当为 false 时，回调函数第一个参数为 mutationRecord
  */
-export function attributeFilter(target, callback, filter, subtree = false) {
+export function attributeFilter(target, callback, filter, subtree = false, isRecordList = false) {
   let config = {
     subtree: !!subtree,
     attributes: true,
     attributeFilter: filter,
     attributeOldValue: true
   }
-  observe(target, callback, config)
+  observe(target, callback, config, isRecordList)
 }
 
 /**
@@ -123,13 +127,14 @@ export function attributeFilter(target, callback, filter, subtree = false) {
  * @param {Element|Node|String} target - 被监听的节点 
  * @param {Function} callback - 当观察到变动时执行的回调函数
  * @param {Boolean} subtree - 是否观察子节点
+ * @param {Boolean} isRecordList - 当为 true 时，回调函数第一个参数为 mutationRecordList，当为 false 时，回调函数第一个参数为 mutationRecord
  */
-export function childList(target, callback, subtree = false) {
+export function childList(target, callback, subtree = false, isRecordList = false) {
   let config = {
     subtree: !!subtree,
     childList: true,
   }
-  observe(target, callback, config)
+  observe(target, callback, config, isRecordList)
 }
 
 /**
@@ -137,14 +142,15 @@ export function childList(target, callback, subtree = false) {
  * 
  * @param {Element|Node|String} target - 被监听的节点
  * @param {Function} callback - 当观察到变动时执行的回调函数
+ * @param {Boolean} isRecordList - 当为 true 时，回调函数第一个参数为 mutationRecordList，当为 false 时，回调函数第一个参数为 mutationRecord
  */
-export function character(target, callback) {
+export function character(target, callback, isRecordList = false) {
   let config = {
     subtree: true,
     characterData: true,
     characterDataOldValue: true,
   }
-  observe(target, callback, config)
+  observe(target, callback, config, isRecordList)
 }
 
 /**
