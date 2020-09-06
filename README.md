@@ -102,7 +102,7 @@ MObserver.remove(target, callback)
 
 config [配置项](https://developer.mozilla.org/zh-CN/docs/Web/API/MutationObserverInit)中，childList，attributes 或者 characterData 三个属性之中，至少有一个必须为 true，否则会抛出 TypeError 异常
 
-### 参数
+#### 参数
 
 * target
   * 说明：需要观察变动的节点
@@ -122,7 +122,7 @@ config [配置项](https://developer.mozilla.org/zh-CN/docs/Web/API/MutationObse
   * 必选：`false`
   * 默认值：`false`
 
-### 示例
+#### 示例
 
 ```js
 import { observe } from 'm-observer'
@@ -147,7 +147,7 @@ observe('#demo', function(mutationRecordList) {
 
 MutationObserverInit 字典配置项（除 attributeFilter 外）都被设置为 true
 
-### 参数
+#### 参数
 
 * target
   * 说明：需要观察变动的节点
@@ -168,7 +168,7 @@ MutationObserverInit 字典配置项（除 attributeFilter 外）都被设置为
   * 必选：`false`
   * 默认值：`false`
 
-### 示例
+#### 示例
 
 ```js
 import { observeAll } from 'm-observer'
@@ -196,7 +196,7 @@ observeAll('#demo', function(mutationRecordList) {
 
 观察受监视元素的 *属性值* 的变更
 
-### 参数
+#### 参数
 
 * target
   * 说明：需要观察变动的节点
@@ -217,7 +217,7 @@ observeAll('#demo', function(mutationRecordList) {
   * 必选：`false`
   * 默认值：`false`
 
-### 示例
+#### 示例
 
 ```js
 import { attribute } from 'm-observer'
@@ -233,7 +233,7 @@ attribute('#demo', function(mutationRecord) {
 
 观察受监视元素的 *指定属性值* 的变更
 
-### 参数
+#### 参数
 
 * target
   * 说明：需要观察变动的节点
@@ -258,7 +258,7 @@ attribute('#demo', function(mutationRecord) {
   * 必选：`false`
   * 默认值：`false`
 
-### 示例
+#### 示例
 
 ```js
 import { attributeFilter } from 'm-observer'
@@ -274,7 +274,7 @@ attributeFilter('#demo', function(mutationRecord) {
 
 监视目标节点添加或删除新的子节点
 
-### 参数
+#### 参数
 
 * target
   * 说明：需要观察变动的节点
@@ -295,7 +295,7 @@ attributeFilter('#demo', function(mutationRecord) {
   * 必选：`false`
   * 默认值：`false`
 
-### 示例
+#### 示例
 
 ```js
 import { childList } from 'm-observer'
@@ -311,7 +311,7 @@ childList('#demo', function(mutationRecord) {
 
 监视指定目标节点或子节点树中节点所包含的字符数据的变化
 
-### 参数
+#### 参数
 
 * target
   * 说明：需要观察变动的节点
@@ -327,7 +327,7 @@ childList('#demo', function(mutationRecord) {
   * 必选：`false`
   * 默认值：`false`
 
-### 示例
+#### 示例
 
 ```js
 import { character } from 'm-observer'
@@ -350,7 +350,7 @@ character('#demo', function(mutationRecord) {
   * 语法：`reconnect(target, callback)`
 
 
-### 参数
+#### 参数
 
 * target
   * 说明：被绑定了观察器的节点
@@ -361,7 +361,7 @@ character('#demo', function(mutationRecord) {
   * 类型：`Function` 
   * 必选：`true`
 
-### 示例
+#### 示例
 
 ```js
 import { attribute, disconnect, reconnect } from 'm-observer'
@@ -385,7 +385,7 @@ reconnect('#demo', listener)
 
 停止观察变动并永久性移除观察者，调用此方法后，无法通过 `reconnect` 重启观察者
 
-### 参数
+#### 参数
 
 * target
   * 说明：被绑定了观察器的节点
@@ -396,7 +396,7 @@ reconnect('#demo', listener)
   * 类型：`Function` 
   * 必选：`true`
 
-### 示例
+#### 示例
 
 ```js
 import { attribute, remove } from 'm-observer'
