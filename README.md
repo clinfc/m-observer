@@ -180,7 +180,7 @@ observeAll('#demo', function(mutationRecord) {
 // 或
 
 observeAll('#demo', function(mutationRecordList) {
-  console.log(mutationRecordList)
+  console.log(mutationRecord)
 }, ['title', 'style'])
 
 // 或
