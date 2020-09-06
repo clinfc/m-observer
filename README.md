@@ -75,13 +75,15 @@ for(let box of boxs) {
 ```JS
 import * as MObserver from 'm-observer'
 
-MObserver.observe(target, callback, config)
+MObserver.observe(target, callback, config[, isRecordList])
 
-MObserver.attribute(target, callback[, subtree])
+MObserver.observeAll(target, callback[, filter[, isRecordList]])
 
-MObserver.attributeFilter(target, callback, filter[, subtree])
+MObserver.attribute(target, callback[, subtree[, isRecordList]])
 
-MObserver.childList(target, callback[, subtree])
+MObserver.attributeFilter(target, callback, filter[, subtree[, isRecordList]])
+
+MObserver.childList(target, callback[, subtree[, isRecordList]])
 
 MObserver.character(target, callback)
 
@@ -94,7 +96,7 @@ MObserver.remove(target, callback)
 
 
 
-## observe(target, callbck, config)
+## observe(target, callbck, config[, isRecordList])
 
 配置MutationObserver在DOM更改匹配给定选项时，通过其回调函数开始接收通知
 
@@ -102,11 +104,23 @@ config [配置项](https://developer.mozilla.org/zh-CN/docs/Web/API/MutationObse
 
 ### 参数
 
-参数|说明|类型|默认值
-:-|:-|:-|:-
-`target`|需要观察变动的节点|`String`/`Element`/`Node`|
-`callback`|当观察到变动时执行的回调函数|`Function<mutationRecord[, observer]>`|
-`config`|观察器的配置，详见[MutationObserverInit](https://developer.mozilla.org/zh-CN/docs/Web/API/MutationObserverInit)|`Object`|
+* target
+  * 说明：需要观察变动的节点
+  * 类型：`String`/`Element`/`Node`
+  * 必选：`true`
+* callback
+  * 说明：当观察到变动时执行的回调函数
+  * 类型：`Function<mutationRecord[, observer]>` 或 `Function<mutationRecordList[, observer]>`（`isRecordList`为`true`时）
+  * 必选：`true`
+* config
+  * 说明：观察器的配置，详见[MutationObserverInit](https://developer.mozilla.org/zh-CN/docs/Web/API/MutationObserverInit)
+  * 类型：`Object`
+  * 必选：`true`
+* isRecordList
+  * 说明：设置回调函数的第一个参数是 `mutationReacord` 还是 `mutationReacordList`。当为 `true` 时，回调函数第一个参数为 `mutationReacordList`
+  * 类型：`Boolean`
+  * 必选：`false`
+  * 默认值：`false`
 
 ### 示例
 
@@ -120,21 +134,88 @@ const config = { attributes: true, subtree: true }
 observe('#demo', function(mutationRecord) {
   console.log(mutationRecord)
 }, config)
+
+// 或
+
+observe('#demo', function(mutationRecordList) {
+  console.log(mutationRecordList)
+}, config, true)
+```
+
+
+## observeAll(target, callbck[, filter[, isRecordList]])
+
+MutationObserverInit 字典配置项（除 attributeFilter 外）都被设置为 true
+
+### 参数
+
+* target
+  * 说明：需要观察变动的节点
+  * 类型：`String`/`Element`/`Node`
+  * 必选：`true`
+* callback
+  * 说明：当观察到变动时执行的回调函数
+  * 类型：`Function<mutationRecord[, observer]>` 或 `Function<mutationRecordList[, observer]>`（`isRecordList`为`true`时）
+  * 必选：`true`
+* filter
+  * 说明：`MutationObserverInit` 中 `attributeFilter` 配置项，详见[MutationObserverInit](https://developer.mozilla.org/zh-CN/docs/Web/API/MutationObserverInit)
+  * 类型：`Array`
+  * 必选：`false`
+  * 默认值：`undefined`
+* isRecordList
+  * 说明：设置回调函数的第一个参数是 `mutationReacord` 还是 `mutationReacordList`。当为 `true` 时，回调函数第一个参数为 `mutationReacordList`
+  * 类型：`Boolean`
+  * 必选：`false`
+  * 默认值：`false`
+
+### 示例
+
+```js
+import { observeAll } from 'm-observer'
+
+observeAll('#demo', function(mutationRecord) {
+  console.log(mutationRecord)
+})
+
+// 或
+
+observeAll('#demo', function(mutationRecordList) {
+  console.log(mutationRecordList)
+}, ['title', 'style'])
+
+// 或
+
+observeAll('#demo', function(mutationRecordList) {
+  console.log(mutationRecordList)
+}, null, true)
 ```
 
 
 
-## attribute(target, callback[, subtree])
+## attribute(target, callback[, subtree[, isRecordList]])
 
 观察受监视元素的 *属性值* 的变更
 
 ### 参数
 
-参数|说明|类型|默认值
-:-|:-|:-|:-
-`target`|需要观察变动的节点|`String`/`Element`/`Node`|
-`callback`|当观察到变动时执行的回调函数|`Function<[mutationRecord[, observer]]>`|
-`subtree`|是否将监视范围扩展至目标节点整个节点树中的所有节点|`Boolean`|`false`
+* target
+  * 说明：需要观察变动的节点
+  * 类型：`String`/`Element`/`Node`
+  * 必选：`true`
+* callback
+  * 说明：当观察到变动时执行的回调函数
+  * 类型：`Function<mutationRecord[, observer]>` 或 `Function<mutationRecordList[, observer]>`（`isRecordList`为`true`时）
+  * 必选：`true`
+* subtree
+  * 说明：是否将监视范围扩展至目标节点整个节点树中的所有节点
+  * 类型：`Boolean`
+  * 必选：`false`
+  * 默认值：`false`
+* isRecordList
+  * 说明：设置回调函数的第一个参数是 `mutationReacord` 还是 `mutationReacordList`。当为 `true` 时，回调函数第一个参数为 `mutationReacordList`
+  * 类型：`Boolean`
+  * 必选：`false`
+  * 默认值：`false`
 
 ### 示例
 
@@ -148,18 +229,34 @@ attribute('#demo', function(mutationRecord) {
 
 
 
-## attributeFilter(target, callback, filter[, subtree])
+## attributeFilter(target, callback, filter[, subtree[, isRecordList]])
 
 观察受监视元素的 *指定属性值* 的变更
 
 ### 参数
 
-参数|说明|类型|默认值
-:-|:-|:-|:-
-`target`|需要观察变动的节点|`String`/`Element`/`Node`|
-`callback`|当观察到变动时执行的回调函数|`Function<[mutationRecord[, observer]]>`|
-`filter`|要监视的特定属性名称的数组|`Array`|
-`subtree`|是否将监视范围扩展至目标节点整个节点树中的所有节点|`Boolean`|`false`
+* target
+  * 说明：需要观察变动的节点
+  * 类型：`String`/`Element`/`Node`
+  * 必选：`true`
+* callback
+  * 说明：当观察到变动时执行的回调函数
+  * 类型：`Function<mutationRecord[, observer]>` 或 `Function<mutationRecordList[, observer]>`（`isRecordList`为`true`时）
+  * 必选：`true`
+* filter
+  * 说明：`MutationObserverInit` 中 `attributeFilter` 配置项，详见[MutationObserverInit](https://developer.mozilla.org/zh-CN/docs/Web/API/MutationObserverInit)
+  * 类型：`Array`
+  * 必选：`true`
+* subtree
+  * 说明：是否将监视范围扩展至目标节点整个节点树中的所有节点
+  * 类型：`Boolean`
+  * 必选：`false`
+  * 默认值：`false`
+* isRecordList
+  * 说明：设置回调函数的第一个参数是 `mutationReacord` 还是 `mutationReacordList`。当为 `true` 时，回调函数第一个参数为 `mutationReacordList`
+  * 类型：`Boolean`
+  * 必选：`false`
+  * 默认值：`false`
 
 ### 示例
 
@@ -173,17 +270,30 @@ attributeFilter('#demo', function(mutationRecord) {
 
 
 
-## childList(target, callback[, subtree])
+## childList(target, callback[, subtree[, isRecordList]])
 
 监视目标节点添加或删除新的子节点
 
 ### 参数
 
-参数|说明|类型|默认值
-:-|:-|:-|:-
-`target`|需要观察变动的节点|`String`/`Element`/`Node`|
-`callback`|当观察到变动时执行的回调函数|`Function<[mutationRecord[, observer]]>`|
-`subtree`|是否将监视范围扩展至目标节点整个节点树中的所有节点|`Boolean`|`false`
+* target
+  * 说明：需要观察变动的节点
+  * 类型：`String`/`Element`/`Node`
+  * 必选：`true`
+* callback
+  * 说明：当观察到变动时执行的回调函数
+  * 类型：`Function<mutationRecord[, observer]>` 或 `Function<mutationRecordList[, observer]>`（`isRecordList`为`true`时）
+  * 必选：`true`
+* subtree
+  * 说明：是否将监视范围扩展至目标节点整个节点树中的所有节点
+  * 类型：`Boolean`
+  * 必选：`false`
+  * 默认值：`false`
+* isRecordList
+  * 说明：设置回调函数的第一个参数是 `mutationReacord` 还是 `mutationReacordList`。当为 `true` 时，回调函数第一个参数为 `mutationReacordList`
+  * 类型：`Boolean`
+  * 必选：`false`
+  * 默认值：`false`
 
 ### 示例
 
@@ -197,16 +307,25 @@ childList('#demo', function(mutationRecord) {
 
 
 
-## character(target, callback)
+## character(target, callback[, isRecordList])
 
 监视指定目标节点或子节点树中节点所包含的字符数据的变化
 
 ### 参数
 
-参数|说明|类型|默认值
-:-|:-|:-|:-
-`target`|需要观察变动的节点|`String`/`Element`/`Node`|
-`callback`|当观察到变动时执行的回调函数|`Function<[mutationRecord[, observer]]>`|
+* target
+  * 说明：需要观察变动的节点
+  * 类型：`String`/`Element`/`Node`
+  * 必选：`true`
+* callback
+  * 说明：当观察到变动时执行的回调函数
+  * 类型：`Function<mutationRecord[, observer]>` 或 `Function<mutationRecordList[, observer]>`（`isRecordList`为`true`时）
+  * 必选：`true`
+* isRecordList
+  * 说明：设置回调函数的第一个参数是 `mutationReacord` 还是 `mutationReacordList`。当为 `true` 时，回调函数第一个参数为 `mutationReacordList`
+  * 类型：`Boolean`
+  * 必选：`false`
+  * 默认值：`false`
 
 ### 示例
 
@@ -233,10 +352,14 @@ character('#demo', function(mutationRecord) {
 
 ### 参数
 
-参数|说明|类型|默认值
-:-|:-|:-|:-
-`target`|需要观察变动的节点|`String`/`Element`/`Node`|
-`callback`|当观察到变动时执行的回调函数|`Function<[mutationRecord[, observer]]>`|
+* target
+  * 说明：被绑定了观察器的节点
+  * 类型：`String`/`Element`/`Node`
+  * 必选：`true`
+* callback
+  * 说明：绑定观察器时的回调函数
+  * 类型：`Function` 
+  * 必选：`true`
 
 ### 示例
 
@@ -264,10 +387,14 @@ reconnect('#demo', listener)
 
 ### 参数
 
-参数|说明|类型|默认值
-:-|:-|:-|:-
-`target`|需要观察变动的节点|`String`/`Element`/`Node`|
-`callback`|当观察到变动时执行的回调函数|`Function<[mutationRecord[, observer]]>`|
+* target
+  * 说明：被绑定了观察器的节点
+  * 类型：`String`/`Element`/`Node`
+  * 必选：`true`
+* callback
+  * 说明：绑定观察器时的回调函数
+  * 类型：`Function` 
+  * 必选：`true`
 
 ### 示例
 
