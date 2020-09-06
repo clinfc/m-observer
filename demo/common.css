@@ -46,7 +46,19 @@
   border-right: 1px solid #dadada;
 }
 
-.right {}
+.right {
+  max-height: 750px;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.right>pre:first-of-type {
+  background-color: #5fb878;
+}
+
+.right>pre:nth-of-type(2n) {
+  background-color: #eaeaea;
+}
 
 .editor {
   box-shadow: 0 0 2px 0 #008000;

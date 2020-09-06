@@ -1,18 +1,16 @@
-// 将 mutationList 显示到页面
-function showMutationList(target, data = {}) {
-  let el = document.querySelector(target)
+function toString(data) {
   let temp = {}
   for (let k in data) {
     if (['addedNodes', 'removedNodes'].includes(k)) {
       temp[k] = []
       data[k].forEach(e => {
-        temp[k].push(e.outerHTML)
+        temp[k].push(e.id ? `nodeId: ${e.id}` : `nodeName: ${e.nodeName}`)
       })
     } else if ('target' === k) {
-      temp[k] = data[k].outerHTML
+      temp[k] = data[k].id ? `nodeId: ${data[k].id}` : `nodeName: ${data[k].nodeName}`
     } else if (['previousSibling', 'nextSibling'].includes(k)) {
       if (data[k]) {
-        temp[k] = data[k].outerHTML
+        temp[k] = data[k].id ? `nodeId: ${data[k].id}` : `nodeName: ${data[k].nodeName}`
       } else {
         temp[k] = `${data[k]}`
       }
@@ -20,7 +18,14 @@ function showMutationList(target, data = {}) {
       temp[k] = `${data[k]}`
     }
   }
-  el.innerText = JSON.stringify(temp, undefined, 2)
+  return temp
+}
+
+// 将 mutationList 显示到页面
+function showMutationList(target, data = {}) {
+  let el = document.querySelector(target)
+  data = Array.isArray(data) ? data.map(item => toString(item)) : toString(data)
+  el.insertAdjacentHTML('afterbegin', `<pre>${JSON.stringify(data, undefined, 2)}</pre>`)
 }
 
 // 停止观察

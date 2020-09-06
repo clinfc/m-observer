@@ -11,7 +11,7 @@
     <div class="container">
       <div class="demo-item">
         <div class="header">
-          <div class="title">attributeFilter</div>
+          <div class="title">attributeFilter(target, callback, ['title'])</div>
           <button type="button" title="停止观察" onclick="disconnect('#demo-01', listener)">disconnect</button>
           <button type="button" title="重新开始观察" onclick="reconnect('#demo-01', listener)">reconnect</button>
           <button type="button" title="移除观察" onclick="remove('#demo-01', listener)">remove</button>
@@ -24,9 +24,7 @@
               <p><input type="color" autocomplete="off" id="bgcolor" placeholder="修改 title 属性值" /></p>
             </div>
           </div>
-          <div class="right">
-            <pre id="demo-01-mobserver"></pre>
-          </div>
+          <div class="right" id="demo-01-mobserver"></div>
         </div>
       </div>
     </div>

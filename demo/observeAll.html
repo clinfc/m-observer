@@ -11,7 +11,7 @@
     <div class="container">
       <div class="demo-item">
         <div class="header">
-          <div class="title">observe(target, callback, config)</div>
+          <div class="title">observeAll(target, callback)</div>
           <button type="button" title="停止观察" onclick="disconnect('#demo-01', listener)">disconnect</button>
           <button type="button" title="重新开始观察" onclick="reconnect('#demo-01', listener)">reconnect</button>
           <button type="button" title="移除观察" onclick="remove('#demo-01', listener)">remove</button>
@@ -25,10 +25,10 @@
       </div>
       <div class="demo-item">
         <div class="header">
-          <div class="title">observe(target, callback, config, true)</div>
-          <button type="button" title="停止观察" onclick="disconnect('#demo-02', listener2)">disconnect</button>
-          <button type="button" title="重新开始观察" onclick="reconnect('#demo-02', listener2)">reconnect</button>
-          <button type="button" title="移除观察" onclick="remove('#demo-02', listener2)">remove</button>
+          <div class="title">observeAll(target, callback, null, true)</div>
+          <button type="button" title="停止观察" onclick="disconnect('#demo-02', listener)">disconnect</button>
+          <button type="button" title="重新开始观察" onclick="reconnect('#demo-02', listener)">reconnect</button>
+          <button type="button" title="移除观察" onclick="remove('#demo-02', listener)">remove</button>
         </div>
         <div class="content">
           <div class="left">
@@ -39,26 +39,13 @@
       </div>
     </div>
     <script type="text/javascript">
-      let config = { 
-        attributes: true,
-        attributeOldValue: true, 
-        childList: true, 
-        subtree: true, 
-        characterData: true, 
-        characterDataOldValue: true ,
-      }
+      MObserver.observeAll('#demo-01', function(mutationRecordList) {
+        showMutationList('#demo-01-mobserver', mutationRecordList)
+      })
       
-      function listener(mutationRecord) {
-        showMutationList('#demo-01-mobserver', mutationRecord)
-      }
-      
-      function listener2(mutationRecordList) {
+      MObserver.observeAll('#demo-02', function(mutationRecordList) {
         showMutationList('#demo-02-mobserver', mutationRecordList)
-      }
-      
-      MObserver.observe('#demo-01', listener, config)
-      
-      MObserver.observe('#demo-02', listener2, config, true)
+      }, null, true)
     </script>
 	</body>
 </html>
