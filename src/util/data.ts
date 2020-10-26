@@ -26,13 +26,16 @@ export function data(target: DOMQuery, call: MutationCallback | EachCallback, ca
     !temp && target.data(key, (temp = new Map()))
 
     // 设置值
-    cache && temp.set(call, cache)
-
-    // 异步删除
-    if (cache === null) {
-        requestAnimationFrame(function () {
-            temp.delete(call)
-        })
+    if (cache) {
+        temp.set(call, cache)
+        return cache
     }
-    return temp.get(call)
+
+    const result = temp.get(call)
+
+    if (cache === null) {
+        temp.delete(call)
+    }
+
+    return result
 }
