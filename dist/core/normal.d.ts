@@ -1,0 +1,11 @@
+import { Selecter } from "../util/dom-query";
+import { EachCallback } from "../util/data";
+export declare function observe(target: Selecter, callback: MutationCallback, option: MutationObserverInit): void;
+export declare function observeAll(target: Selecter, callback: MutationCallback, filter?: string[]): void;
+export declare function attribute(target: Selecter, callback: MutationCallback, subtree?: boolean): void;
+export declare function attributeFilter(target: Selecter, callback: MutationCallback, filter: string[], subtree?: boolean): void;
+export declare function childList(target: Selecter, callback: MutationCallback, subtree?: boolean): void;
+export declare function character(target: Selecter, callback: MutationCallback): void;
+export declare function reconnect(target: Selecter, call: MutationCallback | EachCallback): void;
+export declare function disconnect(target: Selecter, call: MutationCallback | EachCallback): void;
+export declare function remove(target: Selecter, call: MutationCallback | EachCallback): void;
