@@ -90,7 +90,7 @@ observerAll(target, callback)
 
 -   target
 
-    -   描述：需要被兼容的节点
+    -   描述：需要被监听的节点
     -   类型：`string`/`Element`/`Node`
 
 -   callback
@@ -106,7 +106,7 @@ observerAll(target, callback)
 
 -   target
 
-    -   描述：需要被兼容的节点
+    -   描述：需要被监听的节点
     -   类型：`string`/`Element`/`Node`
 
 -   eachcall
@@ -145,7 +145,7 @@ eobserve('#demo2', (mutation) => {
 
 -   target
 
-    -   描述：需要被兼容的节点
+    -   描述：需要被监听的节点
     -   类型：`string`/`Element`/`Node`
 
 -   callback
@@ -162,7 +162,7 @@ eobserve('#demo2', (mutation) => {
 
 -   target
 
-    -   描述：需要被兼容的节点
+    -   描述：需要被监听的节点
     -   类型：`string`/`Element`/`Node`
 
 -   eachcall
@@ -198,7 +198,7 @@ eobserveAll('#demo2', (mutation) => {
 
 -   target
 
-    -   描述：需要被兼容的节点
+    -   描述：需要被监听的节点
     -   类型：`string`/`Element`/`Node`
 
 -   callback
@@ -215,7 +215,7 @@ eobserveAll('#demo2', (mutation) => {
 
 -   target
 
-    -   描述：需要被兼容的节点
+    -   描述：需要被监听的节点
     -   类型：`string`/`Element`/`Node`
 
 -   eachcall
@@ -251,7 +251,7 @@ eattribute('#demo2', (mutation) => {
 
 -   target
 
-    -   描述：需要被兼容的节点
+    -   描述：需要被监听的节点
     -   类型：`string`/`Element`/`Node`
 
 -   callback
@@ -273,7 +273,7 @@ eattribute('#demo2', (mutation) => {
 
 -   target
 
-    -   描述：需要被兼容的节点
+    -   描述：需要被监听的节点
     -   类型：`string`/`Element`/`Node`
 
 -   eachcall
@@ -315,7 +315,7 @@ eattributeFilter('#demo2', (mutation) => {
 
 -   target
 
-    -   描述：需要被兼容的节点
+    -   描述：需要被监听的节点
     -   类型：`string`/`Element`/`Node`
 
 -   callback
@@ -332,7 +332,7 @@ eattributeFilter('#demo2', (mutation) => {
 
 -   target
 
-    -   描述：需要被兼容的节点
+    -   描述：需要被监听的节点
     -   类型：`string`/`Element`/`Node`
 
 -   eachcall
@@ -367,7 +367,7 @@ echildList('#demo2', (mutation) => {
 
 -   target
 
-    -   描述：需要被兼容的节点
+    -   描述：需要被监听的节点
     -   类型：`string`/`Element`/`Node`
 
 -   callback
@@ -379,7 +379,7 @@ echildList('#demo2', (mutation) => {
 
 -   target
 
-    -   描述：需要被兼容的节点
+    -   描述：需要被监听的节点
     -   类型：`string`/`Element`/`Node`
 
 -   eachcall
@@ -413,7 +413,7 @@ echaracter('#demo2', (mutation) => {
 
 -   target
 
-    -   描述：需要被兼容的节点
+    -   描述：需要被监听的节点
     -   类型：`string`/`Element`/`Node`
 
 -   callback
