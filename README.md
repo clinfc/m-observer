@@ -1,410 +1,469 @@
 # m-observer
 
-> 对 MutationObserver 的简单封装
+> 对 MutationObserver 的封装
 
-### 相关文档
+## 安装
 
-[MutationObserver](https://developer.mozilla.org/zh-CN/docs/Web/API/MutationObserver)
-
-[MutationRecord](https://developer.mozilla.org/zh-CN/docs/Web/API/MutationRecord)
-
-[MutationObserverInit](https://developer.mozilla.org/zh-CN/docs/Web/API/MutationObserverInit)
-
-
-# 在 NPM 中使用
-
-### Install
 ```
-npm install m-observer -S
+npm install m-observer
 ```
 
-### Example
+## 使用
+
 ```html
 <div id="demo"></div>
 ```
+
 ```js
-const { attribute } = require('m-observer')
+import { observeAll } from "m-observer"
 
-attribute('#demo', function(mutationRecord, observer) {
-  console.log(mutationRecord)
-})
+function callback(mutations, observer) {
+    for (let mutation of mutaitons) {
+        if (mutation.type === "childList") {
+            console.log("A child node has been added or removed.")
+        } else if (mutation.type === "attributes") {
+            console.log("The " + mutation.attributeName + " attribute was modified.")
+        }
+    }
+}
+
+observeAll("#demo", callback)
+
 // or
-const demo = document.querySelector('#demo')
-attribute(demo, function(mutationRecord, observer) {
-  console.log(mutationRecord)
-})
+const target = document.querySelector("#demo")
+observerAll(target, callback)
 ```
 
-# 在 Script 中使用
+## Script
 
-### Example
+> 使用 `script` 的方式引入需要先在 GitHub 上获取到 `.min.js` 文件
+
 ```html
 <div id="demo"></div>
-
-<script src="./js/m-observer/dist/index.min.js"></script>
+<script src="m-observer/dist/index.min.js"></script>
 <script>
-  MObserver.attribute('#demo', function(mutationRecord, observer) {
-    console.log(mutationRecord)
-  })
+    MObserver.observeAll("#demo", function (mutations) {
+        // do something
+    })
 </script>
 ```
 
-# 批量操作
+## API
 
-```html
-<div class="box"></div>
-<div class="box"></div>
-<div class="box"></div>
-<div class="box"></div>
-```
+### 标准 API
+
+| FN              | 说明                                                                         |
+| :-------------- | :--------------------------------------------------------------------------- |
+| observe         | 绑定监听，自定义配置项。回调函数的第一个参数为 MutationRecord[]。            |
+| observeAll      | 绑定监听，监听所有变化。回调函数的第一个参数为 MutationRecord[]。            |
+| attribute       | 绑定监听，监听 attribute 变化。回调函数的第一个参数为 MutationRecord[]。     |
+| attributeFilter | 绑定监听，监听指定 attribute 变化。回调函数的第一个参数为 MutationRecord[]。 |
+| childList       | 绑定监听，监听节点的增减变化。回调函数的第一个参数为 MutationRecord[]。      |
+| character       | 绑定监听，监听文本变化。回调函数的第一个参数为 MutationRecord[]。            |
+
+### 变种 API
+
+> 变种 API 与 标准 API 相互对应，唯一的区别就是回调函数的第一个参数数据不同。
+
+| FN               | 说明                                                                       |
+| :--------------- | :------------------------------------------------------------------------- |
+| eobserve         | 绑定监听，自定义配置项。回调函数的第一个参数为 MutationRecord。            |
+| eobserveAll      | 绑定监听，监听所有变化。回调函数的第一个参数为 MutationRecord。            |
+| eattribute       | 绑定监听，监听 attribute 变化。回调函数的第一个参数为 MutationRecord。     |
+| eattributeFilter | 绑定监听，监听指定 attribute 变化。回调函数的第一个参数为 MutationRecord。 |
+| echildList       | 绑定监听，监听节点的增减变化。回调函数的第一个参数为 MutationRecord。      |
+| echaracter       | 绑定监听，监听文本变化。回调函数的第一个参数为 MutationRecord。            |
+
+### 管理 API
+
+| FN         | 说明                           |
+| :--------- | :----------------------------- |
+| reconnect  | 重连监听，用于断开后的重新连接 |
+| disconnect | 断开监听，断开后可重连         |
+| remove     | 移除监听，移除后不可重连       |
+
+## API 详解
+
+### observe/eobserve
+
+#### `observe(target, callback, option)`
+
+-   target
+
+    -   描述：需要被兼容的节点
+    -   类型：`string`/`Element`/`Node`
+
+-   callback
+
+    -   描述：监听到变化时执行的回调函数
+    -   类型：`(mutations: MutationRecord[], observer: MutationObserver) => void`
+
+-   option
+    -   描述：监听配置项
+    -   类型：[`MutationObserverInit`](https://developer.mozilla.org/zh-CN/docs/Web/API/MutationObserverInit)
+
+#### `eobserve(target, eachcall, option)`
+
+-   target
+
+    -   描述：需要被兼容的节点
+    -   类型：`string`/`Element`/`Node`
+
+-   eachcall
+
+    -   描述：监听到变化时执行的回调函数
+    -   类型：`(mutations: MutationRecord, observer: MutationObserver) => void`
+
+-   option
+    -   描述：监听配置项
+    -   类型：[`MutationObserverInit`](https://developer.mozilla.org/zh-CN/docs/Web/API/MutationObserverInit)
+
+#### demo
+
 ```js
-import { attribute } from 'm-observer'
+import { observe, eobserve } from "m-observe"
 
-let boxs = document.querySelectorAll('.box')
-for(let box of boxs) {
-  attribute(box, function(mutationRecord) {
-    console.log(mutationRecord)
-  })
+const option = {
+    subtree: true,
+    childList: true
 }
+
+observe('#demo1' (mutations) => {
+    for (let mutation of mutaitons) {
+        // do something
+    }
+}, option)
+
+eobserve('#demo2', (mutation) => {
+    // do something
+}, option)
 ```
 
+### observeAll/eobserveAll
 
+#### `observeAll(target, callback[, filter])`
 
-# API
+-   target
 
-```JS
-import * as MObserver from 'm-observer'
+    -   描述：需要被兼容的节点
+    -   类型：`string`/`Element`/`Node`
 
-MObserver.observe(target, callback, config[, isRecordList])
+-   callback
 
-MObserver.observeAll(target, callback[, filter[, isRecordList]])
+    -   描述：监听到变化时执行的回调函数
+    -   类型：`(mutations: MutationRecord[], observer: MutationObserver) => void`
 
-MObserver.attribute(target, callback[, subtree[, isRecordList]])
+-   filter
+    -   描述：`MutationObserverInit.attributeFilter`
+    -   类型：`Array<string>`
+    -   默认值：`undefined`
 
-MObserver.attributeFilter(target, callback, filter[, subtree[, isRecordList]])
+#### `eobserveAll(target, eachcall[, filter])`
 
-MObserver.childList(target, callback[, subtree[, isRecordList]])
+-   target
 
-MObserver.character(target, callback)
+    -   描述：需要被兼容的节点
+    -   类型：`string`/`Element`/`Node`
 
-MObserver.disconnect(target, callback)
+-   eachcall
 
-MObserver.reconnect(target, callback)
+    -   描述：监听到变化时执行的回调函数
+    -   类型：`(mutations: MutationRecord, observer: MutationObserver) => void`
 
-MObserver.remove(target, callback)
-```
+-   filter
+    -   描述：`MutationObserverInit.attributeFilter`
+    -   类型：`Array<string>`
+    -   默认值：`undefined`
 
-
-
-## observe(target, callbck, config[, isRecordList])
-
-配置MutationObserver在DOM更改匹配给定选项时，通过其回调函数开始接收通知
-
-config [配置项](https://developer.mozilla.org/zh-CN/docs/Web/API/MutationObserverInit)中，childList，attributes 或者 characterData 三个属性之中，至少有一个必须为 true，否则会抛出 TypeError 异常
-
-#### 参数
-
-* target
-  * 说明：需要观察变动的节点
-  * 类型：`String`/`Element`/`Node`
-  * 必选：`true`
-* callback
-  * 说明：当观察到变动时执行的回调函数
-  * 类型：`Function<mutationRecord[, observer]>` 或 `Function<mutationRecordList[, observer]>`（`isRecordList`为`true`时）
-  * 必选：`true`
-* config
-  * 说明：观察器的配置，详见[MutationObserverInit](https://developer.mozilla.org/zh-CN/docs/Web/API/MutationObserverInit)
-  * 类型：`Object`
-  * 必选：`true`
-* isRecordList
-  * 说明：设置回调函数的第一个参数是 `mutationReacord` 还是 `mutationReacordList`。当为 `true` 时，回调函数第一个参数为 `mutationReacordList`
-  * 类型：`Boolean`
-  * 必选：`false`
-  * 默认值：`false`
-
-#### 示例
+#### demo
 
 ```js
-import { observe } from 'm-observer'
-
-// 观察器的配置（需要观察什么变动）
-// 更多配置项见：https://developer.mozilla.org/zh-CN/docs/Web/API/MutationObserverInit
-const config = { attributes: true, subtree: true }
-
-observe('#demo', function(mutationRecord) {
-  console.log(mutationRecord)
-}, config)
-
-// 或
-
-observe('#demo', function(mutationRecordList) {
-  console.log(mutationRecordList)
-}, config, true)
-```
+import { observeAll, eobserveAll } from "m-observe"
 
 
-## observeAll(target, callbck[, filter[, isRecordList]])
-
-MutationObserverInit 字典配置项（除 attributeFilter 外）都被设置为 true
-
-#### 参数
-
-* target
-  * 说明：需要观察变动的节点
-  * 类型：`String`/`Element`/`Node`
-  * 必选：`true`
-* callback
-  * 说明：当观察到变动时执行的回调函数
-  * 类型：`Function<mutationRecord[, observer]>` 或 `Function<mutationRecordList[, observer]>`（`isRecordList`为`true`时）
-  * 必选：`true`
-* filter
-  * 说明：`MutationObserverInit` 中 `attributeFilter` 配置项，详见[MutationObserverInit](https://developer.mozilla.org/zh-CN/docs/Web/API/MutationObserverInit)
-  * 类型：`Array`
-  * 必选：`false`
-  * 默认值：`undefined`
-* isRecordList
-  * 说明：设置回调函数的第一个参数是 `mutationReacord` 还是 `mutationReacordList`。当为 `true` 时，回调函数第一个参数为 `mutationReacordList`
-  * 类型：`Boolean`
-  * 必选：`false`
-  * 默认值：`false`
-
-#### 示例
-
-```js
-import { observeAll } from 'm-observer'
-
-observeAll('#demo', function(mutationRecord) {
-  console.log(mutationRecord)
+observeAll('#demo1' (mutations) => {
+    for (let mutation of mutaitons) {
+        // do something
+    }
 })
 
-// 或
-
-observeAll('#demo', function(mutationRecordList) {
-  console.log(mutationRecord)
-}, ['title', 'style'])
-
-// 或
-
-observeAll('#demo', function(mutationRecordList) {
-  console.log(mutationRecordList)
-}, null, true)
+eobserveAll('#demo2', (mutation) => {
+    // do something
+}, ['title', 'src', 'style', 'link', 'alt'])
 ```
 
+### attribute/eattribute
 
+#### `attribute(target, callback[, subtree])`
 
-## attribute(target, callback[, subtree[, isRecordList]])
+-   target
 
-观察受监视元素的 *属性值* 的变更
+    -   描述：需要被兼容的节点
+    -   类型：`string`/`Element`/`Node`
 
-#### 参数
+-   callback
 
-* target
-  * 说明：需要观察变动的节点
-  * 类型：`String`/`Element`/`Node`
-  * 必选：`true`
-* callback
-  * 说明：当观察到变动时执行的回调函数
-  * 类型：`Function<mutationRecord[, observer]>` 或 `Function<mutationRecordList[, observer]>`（`isRecordList`为`true`时）
-  * 必选：`true`
-* subtree
-  * 说明：是否将监视范围扩展至目标节点整个节点树中的所有节点
-  * 类型：`Boolean`
-  * 必选：`false`
-  * 默认值：`false`
-* isRecordList
-  * 说明：设置回调函数的第一个参数是 `mutationReacord` 还是 `mutationReacordList`。当为 `true` 时，回调函数第一个参数为 `mutationReacordList`
-  * 类型：`Boolean`
-  * 必选：`false`
-  * 默认值：`false`
+    -   描述：监听到变化时执行的回调函数
+    -   类型：`(mutations: MutationRecord[], observer: MutationObserver) => void`
 
-#### 示例
+-   subtree
+    -   描述：是否将监视范围扩展至目标节点整个节点树中的所有节点
+    -   类型：`boolean`
+    -   默认值：`false`
+
+#### `eattribute(target, eachcall[, subtree])`
+
+-   target
+
+    -   描述：需要被兼容的节点
+    -   类型：`string`/`Element`/`Node`
+
+-   eachcall
+
+    -   描述：监听到变化时执行的回调函数
+    -   类型：`(mutations: MutationRecord, observer: MutationObserver) => void`
+
+-   subtree
+    -   描述：是否将监视范围扩展至目标节点整个节点树中的所有节点
+    -   类型：`boolean`
+    -   默认值：`false`
+
+#### demo
 
 ```js
-import { attribute } from 'm-observer'
+import { attribute, eattribute } from "m-observe"
 
-attribute('#demo', function(mutationRecord) {
-  console.log(mutationRecord)
+
+attribute('#demo1' (mutations) => {
+    for (let mutation of mutaitons) {
+        // do something
+    }
+}, true)
+
+eattribute('#demo2', (mutation) => {
+    // do something
 }, true)
 ```
 
+### attributeFilter/eattributeFilter
 
+#### `attributeFilter(target, callback, filter[, subtree])`
 
-## attributeFilter(target, callback, filter[, subtree[, isRecordList]])
+-   target
 
-观察受监视元素的 *指定属性值* 的变更
+    -   描述：需要被兼容的节点
+    -   类型：`string`/`Element`/`Node`
 
-#### 参数
+-   callback
 
-* target
-  * 说明：需要观察变动的节点
-  * 类型：`String`/`Element`/`Node`
-  * 必选：`true`
-* callback
-  * 说明：当观察到变动时执行的回调函数
-  * 类型：`Function<mutationRecord[, observer]>` 或 `Function<mutationRecordList[, observer]>`（`isRecordList`为`true`时）
-  * 必选：`true`
-* filter
-  * 说明：`MutationObserverInit` 中 `attributeFilter` 配置项，详见[MutationObserverInit](https://developer.mozilla.org/zh-CN/docs/Web/API/MutationObserverInit)
-  * 类型：`Array`
-  * 必选：`true`
-* subtree
-  * 说明：是否将监视范围扩展至目标节点整个节点树中的所有节点
-  * 类型：`Boolean`
-  * 必选：`false`
-  * 默认值：`false`
-* isRecordList
-  * 说明：设置回调函数的第一个参数是 `mutationReacord` 还是 `mutationReacordList`。当为 `true` 时，回调函数第一个参数为 `mutationReacordList`
-  * 类型：`Boolean`
-  * 必选：`false`
-  * 默认值：`false`
+    -   描述：监听到变化时执行的回调函数
+    -   类型：`(mutations: MutationRecord[], observer: MutationObserver) => void`
 
-#### 示例
+-   filter
+
+    -   描述：`MutationObserverInit.attributeFilter`
+    -   类型：`Array<string>`
+
+-   subtree
+    -   描述：是否将监视范围扩展至目标节点整个节点树中的所有节点
+    -   类型：`boolean`
+    -   默认值：`false`
+
+#### `eattributeFilter(target, eachcall, filter[, subtree])`
+
+-   target
+
+    -   描述：需要被兼容的节点
+    -   类型：`string`/`Element`/`Node`
+
+-   eachcall
+
+    -   描述：监听到变化时执行的回调函数
+    -   类型：`(mutations: MutationRecord, observer: MutationObserver) => void`
+
+-   filter
+
+    -   描述：`MutationObserverInit.attributeFilter`
+    -   类型：`Array<string>`
+
+-   subtree
+    -   描述：是否将监视范围扩展至目标节点整个节点树中的所有节点
+    -   类型：`boolean`
+    -   默认值：`false`
+
+#### demo
 
 ```js
-import { attributeFilter } from 'm-observer'
+import { attributeFilter, eattributeFilter } from "m-observe"
 
-attributeFilter('#demo', function(mutationRecord) {
-  console.log(mutationRecord)
-}, ['title'])
+const filter = ['title', 'src', 'style', 'link', 'alt']
+
+attributeFilter('#demo1' (mutations) => {
+    for (let mutation of mutaitons) {
+        // do something
+    }
+}, filter)
+
+eattributeFilter('#demo2', (mutation) => {
+    // do something
+}, filter)
 ```
 
+### childList/echildList
 
+#### `childList(target, callback[, subtree])`
 
-## childList(target, callback[, subtree[, isRecordList]])
+-   target
 
-监视目标节点添加或删除新的子节点
+    -   描述：需要被兼容的节点
+    -   类型：`string`/`Element`/`Node`
 
-#### 参数
+-   callback
 
-* target
-  * 说明：需要观察变动的节点
-  * 类型：`String`/`Element`/`Node`
-  * 必选：`true`
-* callback
-  * 说明：当观察到变动时执行的回调函数
-  * 类型：`Function<mutationRecord[, observer]>` 或 `Function<mutationRecordList[, observer]>`（`isRecordList`为`true`时）
-  * 必选：`true`
-* subtree
-  * 说明：是否将监视范围扩展至目标节点整个节点树中的所有节点
-  * 类型：`Boolean`
-  * 必选：`false`
-  * 默认值：`false`
-* isRecordList
-  * 说明：设置回调函数的第一个参数是 `mutationReacord` 还是 `mutationReacordList`。当为 `true` 时，回调函数第一个参数为 `mutationReacordList`
-  * 类型：`Boolean`
-  * 必选：`false`
-  * 默认值：`false`
+    -   描述：监听到变化时执行的回调函数
+    -   类型：`(mutations: MutationRecord[], observer: MutationObserver) => void`
 
-#### 示例
+-   subtree
+    -   描述：是否将监视范围扩展至目标节点整个节点树中的所有节点
+    -   类型：`boolean`
+    -   默认值：`false`
+
+#### `echildList(target, eachcall[, subtree])`
+
+-   target
+
+    -   描述：需要被兼容的节点
+    -   类型：`string`/`Element`/`Node`
+
+-   eachcall
+
+    -   描述：监听到变化时执行的回调函数
+    -   类型：`(mutations: MutationRecord, observer: MutationObserver) => void`
+
+-   subtree
+    -   描述：是否将监视范围扩展至目标节点整个节点树中的所有节点
+    -   类型：`boolean`
+    -   默认值：`false`
+
+#### demo
 
 ```js
-import { childList } from 'm-observer'
+import { childList, echildList } from "m-observe"
 
-childList('#demo', function(mutationRecord) {
-  console.log(mutationRecord)
-})
+childList('#demo1' (mutations) => {
+    for (let mutation of mutaitons) {
+        // do something
+    }
+}, true)
+
+echildList('#demo2', (mutation) => {
+    // do something
+}, true)
 ```
 
+### character/echaracter
 
+#### `character(target, callback)`
 
-## character(target, callback[, isRecordList])
+-   target
 
-监视指定目标节点或子节点树中节点所包含的字符数据的变化
+    -   描述：需要被兼容的节点
+    -   类型：`string`/`Element`/`Node`
 
-#### 参数
+-   callback
 
-* target
-  * 说明：需要观察变动的节点
-  * 类型：`String`/`Element`/`Node`
-  * 必选：`true`
-* callback
-  * 说明：当观察到变动时执行的回调函数
-  * 类型：`Function<mutationRecord[, observer]>` 或 `Function<mutationRecordList[, observer]>`（`isRecordList`为`true`时）
-  * 必选：`true`
-* isRecordList
-  * 说明：设置回调函数的第一个参数是 `mutationReacord` 还是 `mutationReacordList`。当为 `true` 时，回调函数第一个参数为 `mutationReacordList`
-  * 类型：`Boolean`
-  * 必选：`false`
-  * 默认值：`false`
+    -   描述：监听到变化时执行的回调函数
+    -   类型：`(mutations: MutationRecord[], observer: MutationObserver) => void`
 
-#### 示例
+#### `echaracter(target, eachcall)`
+
+-   target
+
+    -   描述：需要被兼容的节点
+    -   类型：`string`/`Element`/`Node`
+
+-   eachcall
+
+    -   描述：监听到变化时执行的回调函数
+    -   类型：`(mutations: MutationRecord, observer: MutationObserver) => void`
+
+#### demo
 
 ```js
-import { character } from 'm-observer'
+import { character, echaracter } from "m-observe"
 
-character('#demo', function(mutationRecord) {
-  console.log(mutationRecord)
-})
+character('#demo1' (mutations) => {
+    for (let mutation of mutaitons) {
+        // do something
+    }
+}, true)
+
+echaracter('#demo2', (mutation) => {
+    // do something
+}, true)
 ```
 
+### reconnect/disconnect/remove
 
+`reconnect(target, callback/eachcall)`
 
-## disconnect、reconnect
+`disconnect(target, callback/eachcall)`
 
-* disconnect：暂停观察者观察活动
-  * 阻止 MutationObserver 实例继续接收的通知，该观察者对象包含的回调函数不会再被调用
-  * 语法：`disconnect(target, callback)`
+`remove(target, callback/eachcall)`
 
-* reconnect：重启观察者观察活动
-  * 重新允许 MutationObserver 实例继续接收的通知，该观察者对象包含的回调函数将继续被调用
-  * 语法：`reconnect(target, callback)`
+-   target
 
+    -   描述：需要被兼容的节点
+    -   类型：`string`/`Element`/`Node`
 
-#### 参数
+-   callback
 
-* target
-  * 说明：被绑定了观察器的节点
-  * 类型：`String`/`Element`/`Node`
-  * 必选：`true`
-* callback
-  * 说明：绑定观察器时的回调函数
-  * 类型：`Function` 
-  * 必选：`true`
+    -   描述：监听到变化时执行的回调函数
+    -   类型：`(mutations: MutationRecord[], observer: MutationObserver) => void`
 
-#### 示例
+-   eachcall
+
+    -   描述：监听到变化时执行的回调函数
+    -   类型：`(mutations: MutationRecord, observer: MutationObserver) => void`
+
+#### demo
 
 ```js
-import { attribute, disconnect, reconnect } from 'm-observer'
+import { reconnect, disconnect, remove, observeAll } from "m-observer"
 
-function listener(mutationRecord) {
-  console.log(mutationRecord)
+function callback(mutations) {
+    // do something
 }
 
-attribute('#demo', listener)
+// 初次绑定监听器
+observeAll("#demo", callback)
 
-// 暂停观察者观察活动
-disconnect('#demo', listener)
+// 断开监听器
+disconnect("#demo", callback)
 
-// 重启观察者观察活动
-reconnect('#demo', listener)
+// 重连监听器
+reconnect("#demo", callback)
+
+// 移除监听器
+remove("#demo", callback)
 ```
 
-
-
-## remove(target, callback)
-
-停止观察变动并永久性移除观察者，调用此方法后，无法通过 `reconnect` 重启观察者
-
-#### 参数
-
-* target
-  * 说明：被绑定了观察器的节点
-  * 类型：`String`/`Element`/`Node`
-  * 必选：`true`
-* callback
-  * 说明：绑定观察器时的回调函数
-  * 类型：`Function` 
-  * 必选：`true`
-
-#### 示例
-
 ```js
-import { attribute, remove } from 'm-observer'
+import { reconnect, disconnect, remove, eobserveAll } from "m-observer"
 
-function listener(mutationRecord) {
-  console.log(mutationRecord)
+function eachcall(mutations) {
+    // do something
 }
-attribute('#demo', listener)
-// 永久性停用观察者
-remove('#demo', listener)
+
+// 初次绑定监听器
+eobserveAll("#demo", eachcall)
+
+// 断开监听器
+disconnect("#demo", eachcall)
+
+// 重连监听器
+reconnect("#demo", eachcall)
+
+// 移除监听器
+remove("#demo", eachcall)
 ```
