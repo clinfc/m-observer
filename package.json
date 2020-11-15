@@ -1,6 +1,6 @@
 {
   "name": "m-observer",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "对 MutationObserver 的简单封装，简化其使用方式",
   "main": "dist/index.min.js",
   "types": "dist/index.d.ts",
